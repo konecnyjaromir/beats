@@ -880,6 +880,11 @@ header {
   color: #b7bfc7;
   font-weight: 500;
 }
+footer .app-version {
+  color: #aab2bb;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 footer {
   border-top: 1px solid #2d333a;
   padding-top: 22px;

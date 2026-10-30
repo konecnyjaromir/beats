@@ -131,3 +131,12 @@ Generated builds, dependencies, portable runtimes, private configurations, loop 
 The WAV files are from AVL Black Pearl by Glen MacArthur / AVL Drumkits, distributed under **CC BY-SA 3.0 with the author's AVL Drumkits exception**. Public redistribution is permitted when the attribution and license conditions are preserved. The author explicitly permits produced music and other non-sample-library works to be licensed freely; modified sample libraries remain subject to share-alike and must use a different name.
 
 See [sample attribution](public/samples/ATTRIBUTION.md) and [third-party notices](THIRD_PARTY_NOTICES.md). The original author notice, full license text and a checksummed source manifest are bundled with the recordings. The sample license is separate from the repository source code; the upstream sample-repository MIT notice does not relicense the WAV files.
+
+## Build identification
+
+The footer displays the application version and an incremental build number, for
+example `v1.0.0+1`. Each successful `npm run build` increments `build-version.json`.
+Commit that file with the release. The number is embedded in the JavaScript bundle
+so it identifies the code actually loaded by the browser. Creating the update ZIP
+does not increment it again. The PHP entry page disables caching so a reload after
+deployment requests the current bundle.

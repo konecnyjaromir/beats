@@ -16,6 +16,7 @@ catch (Throwable $e) {
     fail('Přihlášení není dostupné. Zkontrolujte soukromou konfiguraci beats-auth.php.', 500);
 }
 header('Content-Type: text/html; charset=utf-8');
+header('Cache-Control: no-store');
 ?>
 `;
 await writeFile("dist/index.php", guard + html);

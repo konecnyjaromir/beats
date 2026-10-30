@@ -814,6 +814,7 @@ function App() {
           </a>{" "}
           {t("BEATS / Malé studio pro velké nápady.")}{" "}
           <span>{t("Vytvoř. Opakuj. Najdi groove.")}</span>
+          <span className="app-version">v{__BEATS_VERSION__}</span>
         </footer>
       </main>
       {confirm && (

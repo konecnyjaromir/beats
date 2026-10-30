@@ -131,14 +131,14 @@ export class DrumEngine {
     };
     source.start(time);
   }
-  start(project, onPosition) {
+  start(project, onPosition, { warmup = false } = {}) {
     this.stop();
     this.active = true;
     this.project = structuredClone(project);
     this.timeline = timelineFor(project);
     // Shift the entire timeline so the first hit and playhead remain aligned.
     // prepare() has already verified that the audio renderer is processing.
-    this.startTime = this.ctx.currentTime + 0.08;
+    this.startTime = this.ctx.currentTime + (warmup ? 1.5 : 0.08);
     this.nextBar = 0;
     this.nextTime = this.startTime;
     this.queue = [];

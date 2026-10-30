@@ -137,6 +137,36 @@ test("Playback schedules the first hit immediately, with gapless repeats and can
   engine.releaseOutput();
   assert.equal(keepAlive.stopped, true);
   assert.equal(engine.keepAlive, null);
+  engine.start(project, (position) => positions.push(position), {
+    warmup: true,
+  });
+  assert.equal(
+    sources.at(-1).startedAt,
+    15.5,
+    "Optional USB warm-up delays the first hit by 1.5 seconds",
+  );
+  engine.ctx.currentTime = 14.5;
+  draw();
+  assert.deepEqual(positions.at(-1), { bar: 0, progress: 0 });
+  engine.ctx.currentTime = 16;
+  draw();
+  assert.deepEqual(positions.at(-1), { bar: 0, progress: 0.25 });
+  engine.ctx.currentTime = 17.4;
+  schedule();
+  assert.equal(
+    sources.at(-1).startedAt,
+    17.5,
+    "Warm-up does not delay loop repeats",
+  );
+  engine.stop();
+  engine.start(project, () => {}, { warmup: true });
+  const pending = sources.at(-1);
+  engine.stop();
+  assert.equal(
+    pending.stopped,
+    true,
+    "Stop cancels a hit scheduled after warm-up",
+  );
 });
 
 test("Preparation starts silent audio in the gesture and waits for rendering, not merely resume", async () => {

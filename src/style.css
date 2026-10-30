@@ -382,6 +382,33 @@ header {
   background: #202328;
   border-radius: 12px;
 }
+.play-controls {
+  flex: 0 0 175px;
+}
+.play-controls .play {
+  width: 100%;
+}
+.adapter-warmup {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: #c3c9ce;
+  cursor: pointer;
+}
+.adapter-warmup input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #c5ed82;
+}
+.adapter-warmup-help {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #aab2bb;
+}
 .play {
   display: flex;
   gap: 12px;

@@ -54,6 +54,13 @@ function App() {
     }
   });
   const [search, setSearch] = useState("");
+  const [adapterWarmup, setAdapterWarmup] = useState(() => {
+    try {
+      return localStorage.getItem("beats-adapter-warmup") === "true";
+    } catch {
+      return false;
+    }
+  });
   const searchKey = (text) =>
     text
       .normalize("NFD")
@@ -165,10 +172,14 @@ function App() {
     try {
       await engine.prepare();
       if (navigation !== navigationRef.current) return;
-      engine.start(project, (nextPosition) => {
-        setPosition(nextPosition);
-        setSelected(nextPosition.bar);
-      });
+      engine.start(
+        project,
+        (nextPosition) => {
+          setPosition(nextPosition);
+          setSelected(nextPosition.bar);
+        },
+        { warmup: adapterWarmup },
+      );
       setPlaying(true);
     } catch (e) {
       setMessage(e.message);
@@ -442,14 +453,44 @@ function App() {
               </div>
             </header>
             <section className="transport">
-              <button
-                className={"play " + (playing ? "active" : "")}
-                disabled={loading}
-                onClick={play}
-              >
-                {loading ? "…" : playing ? "■" : "▶"}{" "}
-                <span>{playing ? t("Zastavit") : t("Přehrát")}</span>
-              </button>
+              <div className="play-controls">
+                <button
+                  className={"play " + (playing ? "active" : "")}
+                  disabled={loading}
+                  onClick={play}
+                >
+                  {loading ? "…" : playing ? "■" : "▶"}{" "}
+                  <span>{playing ? t("Zastavit") : t("Přehrát")}</span>
+                </button>
+                <label className="adapter-warmup">
+                  <input
+                    type="checkbox"
+                    checked={adapterWarmup}
+                    disabled={playing || loading}
+                    aria-describedby={
+                      adapterWarmup ? "adapter-warmup-help" : undefined
+                    }
+                    onChange={(event) => {
+                      const enabled = event.target.checked;
+                      setAdapterWarmup(enabled);
+                      try {
+                        localStorage.setItem(
+                          "beats-adapter-warmup",
+                          String(enabled),
+                        );
+                      } catch {}
+                    }}
+                  />
+                  {t("Zahřátí USB adaptéru")}
+                </label>
+                {adapterWarmup && (
+                  <p id="adapter-warmup-help" className="adapter-warmup-help">
+                    {t(
+                      "Warm-up: před přehráváním přidá 1,5 sekundy pro probuzení zvukového adaptéru. Zapni, pokud ve sluchátkách přes adaptér chybí první úder. Opakování smyčky je bez prodlevy.",
+                    )}
+                  </p>
+                )}
+              </div>
               <div className="control tempo">
                 <label htmlFor="bpm">TEMPO</label>
                 <div>

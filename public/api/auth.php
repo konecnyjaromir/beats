@@ -132,7 +132,7 @@ try {
     $query = db()->prepare(
         "INSERT INTO " .
             db_table("users") .
-            " (google_sub, email, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE email = VALUES(email), name = VALUES(name)",
+            " (google_sub, email, name, created_at) VALUES (?, ?, ?, UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email = VALUES(email), name = VALUES(name)",
     );
     $query->execute([$claims["sub"], $claims["email"], $name]);
     $query = db()->prepare(

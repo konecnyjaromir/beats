@@ -106,7 +106,7 @@ function mysql_loops(string $method, ?string $id): never
         $query = $pdo->prepare(
             "INSERT INTO " .
                 $table .
-                " (id, owner_id, payload, summary) VALUES (?, ?, ?, ?)",
+                " (id, owner_id, payload, summary, updated_at) VALUES (?, ?, ?, ?, UTC_TIMESTAMP())",
         );
         $query->execute([$id, $owner, $payload, $summary]);
     }

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { t, language } from "./i18n.js";
-import { appConfig, authRequest, limits } from "./auth.js";
+import { appConfig, authRequest } from "./auth.js";
+import { LandingPage } from "./LandingPage";
 
 let googleScript;
 function loadGoogle() {
@@ -87,37 +88,17 @@ export function AuthGate({ children }) {
   }
   if (session?.user) return children(session.user, logout);
   return (
-    <main className="login-screen">
-      <section className="login-card">
-        <h1>
-          BEATS<span className="brand-dot">●</span>
-        </h1>
-        <h2>{t("Přihlášení do studia")}</h2>
-        <p>
-          {t(
-            "Přihlas se přes Google. Při prvním přihlášení se vytvoří účet. Tvé smyčky uvidíš jen ty.",
-          )}
-        </p>
-        <div ref={button} className="google-signin" aria-busy={busy} />
-        {(!session || busy) && !error && <p role="status">{t("Načítání…")}</p>}
-        {error && (
-          <div role="alert">
-            <p>{error}</p>
-            <button onClick={() => setRetry((n) => n + 1)}>
-              {t("Zkusit znovu")}
-            </button>
-          </div>
-        )}
-        <p className="login-limits">
-          {t(
-            "Limit účtu: {0} smyček, až {1} taktů na smyčku.",
-            limits.maxLoops,
-            limits.maxBars,
-          )}
-        </p>
-        <a href="./privacy.html">{t("Ochrana osobních údajů")}</a>
-        <p className="app-version">v{__BEATS_VERSION__}</p>
-      </section>
-    </main>
+    <LandingPage>
+      <div ref={button} className="google-signin" aria-busy={busy} />
+      {(!session || busy) && !error && <p role="status">{t("Načítání…")}</p>}
+      {error && (
+        <div className="landing-login-error" role="alert">
+          <p>{error}</p>
+          <button onClick={() => setRetry((n) => n + 1)}>
+            {t("Zkusit znovu")}
+          </button>
+        </div>
+      )}
+    </LandingPage>
   );
 }

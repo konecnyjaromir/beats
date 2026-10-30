@@ -18,6 +18,7 @@ async function addTree(source, destination) {
 for (const name of [
   "api",
   "assets",
+  "images",
   "samples",
   "licenses",
   "vendor",

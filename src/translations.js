@@ -1,5 +1,52 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Úvodní stránka": "Home",
+  "Jak to funguje": "How it works",
+  "Otevřít studio": "Open studio",
+  "BICÍ STUDIO V PROHLÍŽEČI": "YOUR BROWSER DRUM STUDIO",
+  "Tvůj rytmus.": "Your rhythm.",
+  "Tvoje pravidla.": "Your rules.",
+  "Od jednoduchého beatu po vlastní aranžmá. Poskládej bicí smyčku, dolaď každý úder a hraj pořád dokola.":
+    "From a simple beat to your own arrangement. Build a drum loop, fine-tune every hit and keep it playing.",
+  "Stačí Google účet. Tvoje smyčky zůstanou ve tvé vlastní knihovně.":
+    "All you need is a Google account. Your loops stay in your own private library.",
+  "Bez instalace. Přímo v prohlížeči.":
+    "No installation. Right in your browser.",
+  "TVŮJ PROSTOR PRO RYTMUS": "YOUR SPACE FOR RHYTHM",
+  "Zvětšit screenshot studia": "Enlarge the studio screenshot",
+  "Editor BEATS se čtyřmi takty, kopákem, virblem, hi-hat a ráfkem. Zelená políčka znázorňují údery různé síly.":
+    "The BEATS editor with four bars, kick, snare, hi-hat and rim. Green cells show hits of different strengths.",
+  "Prohlédnout zblízka": "Take a closer look",
+  "Skutečný editor. Ukázková smyčka Pocket groove.":
+    "The real editor. Pocket groove demo loop.",
+  "Co studio umí": "Studio features",
+  "bicích a perkusí": "drums and percussion",
+  "síly každého úderu": "strengths for every hit",
+  "BPM pro tvoje tempo": "BPM to find your tempo",
+  "tvoje smyčky s tebou": "take your loops with you",
+  "Z NÁPADU DO SMYČKY": "FROM IDEA TO LOOP",
+  "Klikni. Poslouchej. Dolaď.": "Click. Listen. Refine.",
+  "Přehledná mřížka místo složitého nastavování. Každý řádek je nástroj, každé políčko místo pro úder.":
+    "A clear grid makes it easy to get started. Each row is an instrument, each cell a place for a hit.",
+  RYTMUS: "RHYTHM",
+  "Naklikej svůj groove": "Click your groove into place",
+  "Vyber nástroje a rozmísti údery. Jemné ghost notes, běžné údery i silné akcenty mají vlastní zvukové samply.":
+    "Pick your instruments and place your hits. Soft ghost notes, regular hits and strong accents each have their own sound samples.",
+  "Dej každému taktu prostor": "Make every bar your own",
+  "Přidávej a duplikuj takty. Měň jejich taktové označení i dělení jednotlivých řádků a sleduj rytmus při přehrávání.":
+    "Add and duplicate bars. Change their time signatures and each row’s subdivision, then follow the rhythm as it plays.",
+  KNIHOVNA: "LIBRARY",
+  "Vrať se ke svým nápadům": "Come back to your ideas",
+  "Ulož si vlastní knihovnu. Exportuj jednu smyčku nebo všechny najednou a kdykoliv je importuj zpět.":
+    "Keep your own loop library. Export one loop or all of them together, and import them again whenever you like.",
+  "Další groove je na tobě.": "The next groove is yours.",
+  "Pro tvoje nápady: {0} smyček a až {1} taktů v každé.":
+    "Room for your ideas: {0} loops, with up to {1} bars each.",
+  "Začít tvořit": "Start creating",
+  "Malé studio pro velké nápady.": "A small studio for big ideas.",
+  "Náhled editoru BEATS": "BEATS editor preview",
+  "Screenshot editoru BEATS s ukázkovou smyčkou":
+    "Screenshot of the BEATS editor with a demo loop",
   "Přihlášení Google se nepodařilo načíst.": "Could not load Google sign-in.",
   "Přihlášení do studia": "Sign in to your studio",
   "Přihlas se přes Google. Při prvním přihlášení se vytvoří účet. Tvé smyčky uvidíš jen ty.":

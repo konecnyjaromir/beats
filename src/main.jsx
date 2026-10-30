@@ -6,6 +6,7 @@ import { DrumEngine } from "./audio";
 import { TempoInput } from "./TempoInput";
 import { FullscreenButton } from "./FullscreenButton";
 import { HomeScreen } from "./HomeScreen";
+import { copyName } from "./copyName";
 import "./style.css";
 const engine = new DrumEngine();
 document.documentElement.lang = language;
@@ -189,11 +190,25 @@ function App() {
     try {
       const result = await api("POST", {
         ...project,
+        name: copy
+          ? copyName(
+              project.name,
+              library.map((item) => item.name),
+              t("kopie"),
+            )
+          : project.name,
         ...(!copy && savedId ? { id: savedId } : {}),
       });
       if (navigation === navigationRef.current) {
         setSavedId(result.id);
         setDirty(projectRef.current !== snapshot);
+        if (copy) {
+          setProject((currentProject) =>
+            currentProject?.name === snapshot.name
+              ? { ...currentProject, name: result.name }
+              : currentProject,
+          );
+        }
         setMessage(t("Smyčka je uložená."));
       }
       await refresh();
@@ -403,9 +418,9 @@ function App() {
                 </div>
               </div>
               <div className="save-actions">
-              <button type="button" onClick={() => guard(home)}>
-                {t("Zavřít")}
-              </button>
+                <button type="button" onClick={() => guard(home)}>
+                  {t("Zavřít")}
+                </button>
                 <FullscreenButton onError={setMessage} />
                 {savedId && (
                   <button disabled={loading} onClick={() => save(true)}>

@@ -224,7 +224,7 @@ function App() {
       setSavedId(loadedId);
       setSelected(0);
       setDirty(false);
-      setMessage(t("Smyčka načtena."));
+      setMessage("");
       window.scrollTo({ top: 0, behavior: "instant" });
     } catch (e) {
       setMessage(e.message);

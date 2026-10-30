@@ -1,0 +1,27 @@
+{
+  "name": "beats-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A bilingual acoustic drum sequencer with per-bar time signatures and a PHP backend.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/konecnyjaromir/beats.git"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.js",
+    "test:api": "node tests/api.mjs",
+    "package:update": "node scripts/package-update.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@prettier/plugin-php": "^0.26.0",
+    "prettier": "^3.9.10",
+    "vite": "^7.2.0"
+  }
+}

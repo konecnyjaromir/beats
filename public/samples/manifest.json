@@ -1,0 +1,280 @@
+{
+  "collection": "BEATS AVL Black Pearl selection",
+  "author": "Glen MacArthur",
+  "license": "CC-BY-SA-3.0 with the AVL Drumkits exception",
+  "sourceRepository": "https://github.com/backmeupplz/drumkit-kits",
+  "sourceCommit": "04c2ad754456ce48c75b01e8a508ed73a2ec082c",
+  "changes": "Selection of 54 WAV files; no WAV bytes modified from the distribution source. Playback gain changes are runtime-only.",
+  "files": [
+    {
+      "file": "36_v1.wav",
+      "sourcePath": "avl-black-pearl/36_v1.wav",
+      "sha256": "8c62b1afe55a3eb5694e8f51cf2f177e119df02951105828d8718c7f3106fdf8"
+    },
+    {
+      "file": "36_v3.wav",
+      "sourcePath": "avl-black-pearl/36_v3.wav",
+      "sha256": "bb1981a6f5067b00d1c993e0c2dc9a4cb5a8a75609e5bd7a1f7852bd45de17c5"
+    },
+    {
+      "file": "36_v5.wav",
+      "sourcePath": "avl-black-pearl/36_v5.wav",
+      "sha256": "1b94ef15ecbb6e615b80dba6a468db707715a312b5ed937d924cd356110626e0"
+    },
+    {
+      "file": "37_v1.wav",
+      "sourcePath": "avl-black-pearl/37_v1.wav",
+      "sha256": "7023d45635749b61902393b76732ca623d69a6bb32084f1a973c5ed8c55d1b8e"
+    },
+    {
+      "file": "37_v3.wav",
+      "sourcePath": "avl-black-pearl/37_v3.wav",
+      "sha256": "8dfa14ad0a82dfd7e5802f1d782ad5291226102c4cc7ec6881a10fa322174fec"
+    },
+    {
+      "file": "37_v5.wav",
+      "sourcePath": "avl-black-pearl/37_v5.wav",
+      "sha256": "68d5d4de285372bb1a6a9e31a67e813101b8e1cf43f625006a1f4975f847a222"
+    },
+    {
+      "file": "38_v1.wav",
+      "sourcePath": "avl-black-pearl/38_v1.wav",
+      "sha256": "61048cfffa32d091fbf8f257173b86a9770d63d51112d24521539d10d437ea96"
+    },
+    {
+      "file": "38_v3.wav",
+      "sourcePath": "avl-black-pearl/38_v3.wav",
+      "sha256": "2da054c1ea52b86a5c32124e913ac6cd9f4a96af3fd291eb4278d20267ef8162"
+    },
+    {
+      "file": "38_v5.wav",
+      "sourcePath": "avl-black-pearl/38_v5.wav",
+      "sha256": "16c84f26d82cb1273541669f6a6ef598f3179de516328b6719843ad1e8e136b8"
+    },
+    {
+      "file": "39_v1.wav",
+      "sourcePath": "avl-black-pearl/39_v1.wav",
+      "sha256": "e91bbf6a31ce50944765ca04825966a1b9536301116a22be286a405d2c3bcf3b"
+    },
+    {
+      "file": "39_v3.wav",
+      "sourcePath": "avl-black-pearl/39_v3.wav",
+      "sha256": "96583fe7c10fa5bc013f8940b2f5fec25fbd01c49cfaabbda6e46808d40590dc"
+    },
+    {
+      "file": "39_v5.wav",
+      "sourcePath": "avl-black-pearl/39_v5.wav",
+      "sha256": "cdf72c920f5999f4e8cdc3798b844ff13c4b249b3ce89ee840582a38d11c9829"
+    },
+    {
+      "file": "40_v1.wav",
+      "sourcePath": "avl-black-pearl/40_v1.wav",
+      "sha256": "b0587450d04f7bdabc8a4da997f98990303adde18eacc2f071610e48c68599cf"
+    },
+    {
+      "file": "40_v3.wav",
+      "sourcePath": "avl-black-pearl/40_v3.wav",
+      "sha256": "b7efe56e43522a7fcfce6c772152331e6b27a9a043f02a2a23cef13722c18329"
+    },
+    {
+      "file": "40_v5.wav",
+      "sourcePath": "avl-black-pearl/40_v5.wav",
+      "sha256": "893e6e7288230a08bba514028386b2c35f025e0f77fc2ae677916d86b5cb53b4"
+    },
+    {
+      "file": "41_v1.wav",
+      "sourcePath": "avl-black-pearl/41_v1.wav",
+      "sha256": "98f4c815981e0a2e98f39b557222a89a6935c5bfc61262f877b2843f4624c7c5"
+    },
+    {
+      "file": "41_v3.wav",
+      "sourcePath": "avl-black-pearl/41_v3.wav",
+      "sha256": "08bc50884c1cc9d1041f3dfbba23c96e0728d37b0c570db5ccf270db1b279449"
+    },
+    {
+      "file": "41_v5.wav",
+      "sourcePath": "avl-black-pearl/41_v5.wav",
+      "sha256": "f524f361160b2a2cea17288551ff8ad07952fe919b7c56ec4be593b3ae96c9de"
+    },
+    {
+      "file": "42_v1.wav",
+      "sourcePath": "avl-black-pearl/42_v1.wav",
+      "sha256": "09a9a81e9511d21c57ce13b8b496a0bfd9caa3b650c6ddcf0fb9e96cf2b30377"
+    },
+    {
+      "file": "42_v3.wav",
+      "sourcePath": "avl-black-pearl/42_v3.wav",
+      "sha256": "ffe25554917ca0a3d53ddaaf60f7f3c040b7d7db418048deea9a1d33fd118e98"
+    },
+    {
+      "file": "42_v5.wav",
+      "sourcePath": "avl-black-pearl/42_v5.wav",
+      "sha256": "4a057a07063df42d72a1f61058a70157189604d32c732980093f290945843efc"
+    },
+    {
+      "file": "44_v1.wav",
+      "sourcePath": "avl-black-pearl/44_v1.wav",
+      "sha256": "61c2fcd2b7657162688d3fc57bc5df3e47af917a29c73f2142c876180942f018"
+    },
+    {
+      "file": "44_v3.wav",
+      "sourcePath": "avl-black-pearl/44_v3.wav",
+      "sha256": "27789e5e1163bfa27e3cb54639bcf194def8ec6d521c5b00b36cf72945dba42a"
+    },
+    {
+      "file": "44_v5.wav",
+      "sourcePath": "avl-black-pearl/44_v5.wav",
+      "sha256": "6e6cc29446a3724abcf1037bb32da7770f8d83ac5f2283fca4f165728e23c387"
+    },
+    {
+      "file": "45_v1.wav",
+      "sourcePath": "avl-black-pearl/45_v1.wav",
+      "sha256": "ddae1efc5d6cac34ea5db5297ddac47e1d2feddb390bbee235636354747b0d08"
+    },
+    {
+      "file": "45_v3.wav",
+      "sourcePath": "avl-black-pearl/45_v3.wav",
+      "sha256": "a39918cb878bc9e3079a75d63b32778ea3bdfee9644502b0b171c8a9af0646fe"
+    },
+    {
+      "file": "45_v5.wav",
+      "sourcePath": "avl-black-pearl/45_v5.wav",
+      "sha256": "cbaad9cadeb72deae4dc93bd014a78c9ba49dca7cba35de7f76c5f5ef7e5df53"
+    },
+    {
+      "file": "46_v1.wav",
+      "sourcePath": "avl-black-pearl/46_v1.wav",
+      "sha256": "2ca10b4ad19c1cae6a35216f32a034df078cd650c1896036abbc72f334000814"
+    },
+    {
+      "file": "46_v3.wav",
+      "sourcePath": "avl-black-pearl/46_v3.wav",
+      "sha256": "442a4a911b257a5dcb39a943e1945ce9285ae9e6d1191dec6791fe74fc15e065"
+    },
+    {
+      "file": "46_v5.wav",
+      "sourcePath": "avl-black-pearl/46_v5.wav",
+      "sha256": "84ee10a52ad8e09650972ebb952e24ae324b6af18e452a28a030664313165ecd"
+    },
+    {
+      "file": "48_v1.wav",
+      "sourcePath": "avl-black-pearl/48_v1.wav",
+      "sha256": "92b0098fd561f19d318bd2d6e47d417a05b65668068ce3a119b869de68ad6de4"
+    },
+    {
+      "file": "48_v3.wav",
+      "sourcePath": "avl-black-pearl/48_v3.wav",
+      "sha256": "ff9dfba9f8104168e009275b2e909b4b72af7089f4164d2385648cd6f001efab"
+    },
+    {
+      "file": "48_v5.wav",
+      "sourcePath": "avl-black-pearl/48_v5.wav",
+      "sha256": "13663a5d9cc932c48e4424967023b80f5c65ef5a6023c3dfdc8976b372eb2620"
+    },
+    {
+      "file": "49_v1.wav",
+      "sourcePath": "avl-black-pearl/49_v1.wav",
+      "sha256": "bef3a4d1ce5c7def3481a6edf5beff81002d0e0323a493e3bed91fb274a33ccc"
+    },
+    {
+      "file": "49_v3.wav",
+      "sourcePath": "avl-black-pearl/49_v3.wav",
+      "sha256": "19565007f79e04014a82bc8f2cf820b4d4020783349318a473e080a0c0a0a13f"
+    },
+    {
+      "file": "49_v5.wav",
+      "sourcePath": "avl-black-pearl/49_v5.wav",
+      "sha256": "10d5d4c08fa8750f64491f46fb9520aa4f829b2bb955064d04d65ff117aee813"
+    },
+    {
+      "file": "51_v1.wav",
+      "sourcePath": "avl-black-pearl/51_v1.wav",
+      "sha256": "f84652473dfb5d8d9e6b27821a111cb8a9c697f960bc559d1c3b04e4806f88ed"
+    },
+    {
+      "file": "51_v3.wav",
+      "sourcePath": "avl-black-pearl/51_v3.wav",
+      "sha256": "cc702d78c02cb13d7b7818875b0d6b4bdfe1a71e1fd60d45c178c8cc9825abd2"
+    },
+    {
+      "file": "51_v5.wav",
+      "sourcePath": "avl-black-pearl/51_v5.wav",
+      "sha256": "57175fc33596d17e3c2d3f4f9fcbf269f0672970b200ac0541a273f5cbc9b821"
+    },
+    {
+      "file": "53_v1.wav",
+      "sourcePath": "avl-black-pearl/53_v1.wav",
+      "sha256": "39d601aec3106d80c299ba0598ec16bfc147745d04b53205973b733a4c8309ff"
+    },
+    {
+      "file": "53_v3.wav",
+      "sourcePath": "avl-black-pearl/53_v3.wav",
+      "sha256": "1520943c808d23a175073f88938771092c059e0346c0e85472924b7b92356013"
+    },
+    {
+      "file": "53_v5.wav",
+      "sourcePath": "avl-black-pearl/53_v5.wav",
+      "sha256": "dc9414ebcfbbe4cb153614bf0bb4194a5edfcca47c24415a71e3c58c04e83cbe"
+    },
+    {
+      "file": "54_v1.wav",
+      "sourcePath": "avl-black-pearl/54_v1.wav",
+      "sha256": "387385e89332f2af0211b24542c7e277bdeee3295cfc9fcfac8bad6b79530936"
+    },
+    {
+      "file": "54_v3.wav",
+      "sourcePath": "avl-black-pearl/54_v3.wav",
+      "sha256": "d6d32235612946f65968bc17364322cffa2a352c780d7c7cfa01a89e155c6927"
+    },
+    {
+      "file": "54_v5.wav",
+      "sourcePath": "avl-black-pearl/54_v5.wav",
+      "sha256": "dd88203f9aaaa1b60f03c13e315df5acff48243bb014bb8e3a90b06f55cac697"
+    },
+    {
+      "file": "55_v1.wav",
+      "sourcePath": "avl-black-pearl/55_v1.wav",
+      "sha256": "96cc1bcb14fab06c330d85af950e0a41b166db294a0a956830434c39168252bb"
+    },
+    {
+      "file": "55_v3.wav",
+      "sourcePath": "avl-black-pearl/55_v3.wav",
+      "sha256": "f562f31ca7416fe55dce958c6174b3b100b5e8ddbc6ed2befcb8d44e6b833089"
+    },
+    {
+      "file": "55_v5.wav",
+      "sourcePath": "avl-black-pearl/55_v5.wav",
+      "sha256": "1de71eab0e615423b9787d7a924606bc691bc470986338ca8075086ba97fb7a2"
+    },
+    {
+      "file": "56_v1.wav",
+      "sourcePath": "avl-black-pearl/56_v1.wav",
+      "sha256": "8bc5091bf88d27af82519e86c7535eac9b2725a5129314b9af462127b7fa9333"
+    },
+    {
+      "file": "56_v3.wav",
+      "sourcePath": "avl-black-pearl/56_v3.wav",
+      "sha256": "55ad36b0dc00519cc615f20da5dc7fd692ab178c748aa918efc0d80846741b64"
+    },
+    {
+      "file": "56_v5.wav",
+      "sourcePath": "avl-black-pearl/56_v5.wav",
+      "sha256": "ab9a6a0df01b6708258e066bdb112b62bfbe5d592f7b1602eea5fd58060cb5fe"
+    },
+    {
+      "file": "61_v1.wav",
+      "sourcePath": "avl-black-pearl/61_v1.wav",
+      "sha256": "5dfa0fdeeabb921110a873257f20ff3831bc19dbe97943fbfbbe1dd79abc2af9"
+    },
+    {
+      "file": "61_v3.wav",
+      "sourcePath": "avl-black-pearl/61_v3.wav",
+      "sha256": "e9c5a549e93e579305d7c8f2cc28c5790d13f1de973ba9e45f6bfdf58df8aece"
+    },
+    {
+      "file": "61_v5.wav",
+      "sourcePath": "avl-black-pearl/61_v5.wav",
+      "sha256": "bbe5b90943ed7734f2e3c3469dab7548dcfa2621fa03e1e83c86297329016509"
+    }
+  ]
+}

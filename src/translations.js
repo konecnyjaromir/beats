@@ -1,5 +1,11 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Snížit tempo": "Decrease tempo",
+  "Zvýšit tempo": "Increase tempo",
+  "Tempo {0} BPM. Změnit tempo": "Tempo {0} BPM. Change tempo",
+  "Nastavení tempa": "Tempo settings",
+  "Zvol tempo od 30 do 300 BPM.": "Choose a tempo from 30 to 300 BPM.",
+  "Použít tempo": "Apply tempo",
   "Dělení řádku {0}: {1}. Změnit dělení":
     "Divisions for row {0}: {1}. Change divisions",
   "Počet stejných dílů celého taktu (1–64).":

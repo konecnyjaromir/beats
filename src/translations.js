@@ -1,8 +1,9 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  Storno: "Cancel",
   "Zahřátí USB adaptéru": "USB adapter warm-up",
-  "Warm-up: před přehráváním přidá 1,5 sekundy pro probuzení zvukového adaptéru. Zapni, pokud ve sluchátkách přes adaptér chybí první úder. Opakování smyčky je bez prodlevy.":
-    "Warm-up: adds 1.5 seconds before playback to wake the audio adapter. Enable if headphones connected through an adapter miss the first hit. Loop repeats have no extra delay.",
+  "Warm-up přehraje slabý úder do ráfku pro probuzení zvukového adaptéru. Za 500 ms začne smyčka. Zapni, pokud ve sluchátkách přes adaptér chybí první úder. Opakování smyčky je bez zahřívacího úderu a prodlevy.":
+    "Warm-up plays a soft rim hit to wake the audio adapter. The loop starts after 500 ms. Enable if headphones connected through an adapter miss the first hit. Loop repeats have no warm-up hit or extra delay.",
   "Snížit tempo": "Decrease tempo",
   "Zvýšit tempo": "Increase tempo",
   "Tempo {0} BPM. Změnit tempo": "Tempo {0} BPM. Change tempo",

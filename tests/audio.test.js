@@ -62,6 +62,8 @@ test("Playback schedules the first hit immediately, with gapless repeats and can
   engine.master = engine.ctx.createGain();
   const kick = {};
   engine.buffers.set("kick-3", kick);
+  const warmupRim = {};
+  engine.buffers.set("rim-1", warmupRim);
   const positions = [];
   const project = {
     bpm: 120,
@@ -142,20 +144,26 @@ test("Playback schedules the first hit immediately, with gapless repeats and can
   });
   assert.equal(
     sources.at(-1).startedAt,
-    15.5,
-    "Optional USB warm-up delays the first hit by 1.5 seconds",
+    14.5,
+    "Optional USB warm-up delays the first hit by 500 ms",
   );
-  engine.ctx.currentTime = 14.5;
+  assert.equal(
+    sources.at(-2).buffer,
+    warmupRim,
+    "Warm-up plays the soft rim sample before the loop",
+  );
+  assert.equal(sources.at(-2).startedAt, 14.01);
+  engine.ctx.currentTime = 14.2;
   draw();
   assert.deepEqual(positions.at(-1), { bar: 0, progress: 0 });
-  engine.ctx.currentTime = 16;
+  engine.ctx.currentTime = 15;
   draw();
   assert.deepEqual(positions.at(-1), { bar: 0, progress: 0.25 });
-  engine.ctx.currentTime = 17.4;
+  engine.ctx.currentTime = 16.4;
   schedule();
   assert.equal(
     sources.at(-1).startedAt,
-    17.5,
+    16.5,
     "Warm-up does not delay loop repeats",
   );
   engine.stop();

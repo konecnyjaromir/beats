@@ -5,6 +5,7 @@ import { initial, bar, row, uid, instruments, normalizeProject } from "./model";
 import { DrumEngine } from "./audio";
 import { TempoInput } from "./TempoInput";
 import { DivisionPicker } from "./DivisionPicker";
+import { WarmupToggle } from "./WarmupToggle";
 import { FullscreenButton } from "./FullscreenButton";
 import { HomeScreen } from "./HomeScreen";
 import { copyName } from "./copyName";
@@ -56,7 +57,7 @@ function App() {
   const [search, setSearch] = useState("");
   const [adapterWarmup, setAdapterWarmup] = useState(() => {
     try {
-      return localStorage.getItem("beats-adapter-warmup") === "true";
+      return localStorage.getItem("beats-adapter-warmup-v2") === "true";
     } catch {
       return false;
     }
@@ -462,34 +463,19 @@ function App() {
                   {loading ? "…" : playing ? "■" : "▶"}{" "}
                   <span>{playing ? t("Zastavit") : t("Přehrát")}</span>
                 </button>
-                <label className="adapter-warmup">
-                  <input
-                    type="checkbox"
-                    checked={adapterWarmup}
-                    disabled={playing || loading}
-                    aria-describedby={
-                      adapterWarmup ? "adapter-warmup-help" : undefined
-                    }
-                    onChange={(event) => {
-                      const enabled = event.target.checked;
-                      setAdapterWarmup(enabled);
-                      try {
-                        localStorage.setItem(
-                          "beats-adapter-warmup",
-                          String(enabled),
-                        );
-                      } catch {}
-                    }}
-                  />
-                  {t("Zahřátí USB adaptéru")}
-                </label>
-                {adapterWarmup && (
-                  <p id="adapter-warmup-help" className="adapter-warmup-help">
-                    {t(
-                      "Warm-up: před přehráváním přidá 1,5 sekundy pro probuzení zvukového adaptéru. Zapni, pokud ve sluchátkách přes adaptér chybí první úder. Opakování smyčky je bez prodlevy.",
-                    )}
-                  </p>
-                )}
+                <WarmupToggle
+                  checked={adapterWarmup}
+                  disabled={playing || loading}
+                  onChange={(enabled) => {
+                    setAdapterWarmup(enabled);
+                    try {
+                      localStorage.setItem(
+                        "beats-adapter-warmup-v2",
+                        String(enabled),
+                      );
+                    } catch {}
+                  }}
+                />
               </div>
               <div className="control tempo">
                 <label htmlFor="bpm">TEMPO</label>

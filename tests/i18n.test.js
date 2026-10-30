@@ -28,6 +28,7 @@ test("Every static UI translation key has a nonempty English entry", () => {
     "FullscreenButton.jsx",
     "HomeScreen.jsx",
     "TempoInput.jsx",
+    "WarmupToggle.jsx",
     "DivisionPicker.jsx",
   ]) {
     const source = readFileSync(

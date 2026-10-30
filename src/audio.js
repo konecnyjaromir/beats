@@ -138,7 +138,9 @@ export class DrumEngine {
     this.timeline = timelineFor(project);
     // Shift the entire timeline so the first hit and playhead remain aligned.
     // prepare() has already verified that the audio renderer is processing.
-    this.startTime = this.ctx.currentTime + (warmup ? 1.5 : 0.08);
+    const now = this.ctx.currentTime;
+    if (warmup) this.hit("rim", 1, now + 0.01);
+    this.startTime = now + (warmup ? 0.5 : 0.08);
     this.nextBar = 0;
     this.nextTime = this.startTime;
     this.queue = [];

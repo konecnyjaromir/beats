@@ -403,12 +403,6 @@ header {
   margin: 0;
   accent-color: #c5ed82;
 }
-.adapter-warmup-help {
-  margin: 10px 0 0;
-  font-size: 11px;
-  line-height: 1.5;
-  color: #aab2bb;
-}
 .play {
   display: flex;
   gap: 12px;

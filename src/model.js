@@ -37,11 +37,6 @@ export const bar = (numerator = 4, denominator = 4) => ({
 });
 export function initial() {
   const b = bar();
-  b.rows[0].steps[0] = 3;
-  b.rows[0].steps[8] = 3;
-  b.rows[1].steps[4] = 3;
-  b.rows[1].steps[12] = 3;
-  b.rows[2].steps = b.rows[2].steps.map((_, i) => (i % 2 === 0 ? 2 : 0));
   return {
     name: t("Můj první groove"),
     bpm: 100,

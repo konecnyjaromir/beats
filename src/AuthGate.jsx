@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { t, language } from "./i18n.js";
 import { appConfig, authRequest } from "./auth.js";
 import { LandingPage } from "./LandingPage";
+import { createDemo } from "./demo.js";
 
 let googleScript;
 function loadGoogle() {
@@ -23,6 +24,7 @@ export function AuthGate({ children }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [retry, setRetry] = useState(0);
+  const [demo, setDemo] = useState(null);
   const button = useRef(null);
   const googleMode = appConfig.authMode === "google";
   useEffect(() => {
@@ -41,7 +43,7 @@ export function AuthGate({ children }) {
     };
   }, [googleMode, retry]);
   useEffect(() => {
-    if (!googleMode || !session || session.user) return;
+    if (!googleMode || !session || session.user || demo) return;
     let cancelled = false;
     loadGoogle()
       .then(() => {
@@ -79,10 +81,15 @@ export function AuthGate({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [googleMode, session, retry]);
+  }, [googleMode, session, retry, demo]);
+  if (demo) return children(null, () => setDemo(null), demo);
   if (!googleMode) return children(null, null);
-  async function logout() {
-    await authRequest({ action: "logout" });
+  async function logout(deleteAccount = false) {
+    await authRequest(
+      deleteAccount
+        ? { action: "delete-account", confirm: true }
+        : { action: "logout" },
+    );
     globalThis.google?.accounts.id.disableAutoSelect();
     setSession(await authRequest());
   }
@@ -90,6 +97,25 @@ export function AuthGate({ children }) {
   return (
     <LandingPage>
       <div ref={button} className="google-signin" aria-busy={busy} />
+      <button
+        className="landing-demo"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          setError("");
+          try {
+            const response = await fetch("./api/demo.php");
+            if (!response.ok) throw Error(t("Demo se nepodařilo načíst."));
+            setDemo(createDemo(await response.json()));
+          } catch {
+            setError(t("Demo se nepodařilo načíst."));
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        {t("Vyzkoušet bez registrace")}
+      </button>
       {(!session || busy) && !error && <p role="status">{t("Načítání…")}</p>}
       {error && (
         <div className="landing-login-error" role="alert">

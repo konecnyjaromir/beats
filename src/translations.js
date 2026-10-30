@@ -1,5 +1,21 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Smyčka nebyla nalezena.": "Loop not found.",
+  "Vyzkoušej studio bez účtu. Pro vlastní uloženou knihovnu se přihlas přes Google.":
+    "Try the studio without an account. Sign in with Google to keep your own saved library.",
+  "Vyzkoušet bez registrace": "Try without signing up",
+  "Demo se nepodařilo načíst.": "Could not load the demo.",
+  "Demo bez registrace": "Demo — no account needed",
+  "Smyčky můžeš libovolně měnit. Zůstanou jen v této otevřené stránce; před odchodem je exportuj do JSON nebo ZIP.":
+    "Edit any loop. Your changes stay only in this open page; export them as JSON or ZIP before leaving.",
+  "Ukončit demo": "Exit demo",
+  "Ukončením dema se smažou všechny jeho změny. Exportované soubory ti zůstanou. Pokračovat?":
+    "Exiting the demo discards all its changes. Your exported files are kept. Continue?",
+  "Ukončit demo / přihlásit se": "Exit demo / sign in",
+  "Smazat účet": "Delete account",
+  "Trvale smazat účet": "Permanently delete account",
+  "Účet {0} a všechny jeho smyčky budou trvale smazány. Zmizí i neuložené změny. Tuto akci nelze vrátit. Před smazáním si můžeš exportovat knihovnu do ZIP. Opravdu pokračovat?":
+    "Account {0} and all its loops will be permanently deleted, including unsaved changes. This cannot be undone. You can export your library as a ZIP before deleting it. Continue?",
   "Úvodní stránka": "Home",
   "Jak to funguje": "How it works",
   "Otevřít studio": "Open studio",

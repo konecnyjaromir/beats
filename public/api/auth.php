@@ -43,6 +43,24 @@ try {
         session_regenerate_id(true);
         respond(["ok" => true]);
     }
+    if (($input["action"] ?? "") === "delete-account") {
+        if (($input["confirm"] ?? false) !== true) {
+            fail("Neplatný požadavek aplikace.", 400);
+        }
+        $stage = "DATABASE";
+        $owner = owner_id();
+        $pdo = db();
+        $pdo->beginTransaction();
+        // Only the session owner can be deleted. Foreign-key cascade removes their loops.
+        $delete = $pdo->prepare(
+            "DELETE FROM " . db_table("users") . " WHERE id = ?",
+        );
+        $delete->execute([$owner]);
+        $pdo->commit();
+        $_SESSION = [];
+        session_regenerate_id(true);
+        respond(["ok" => true]);
+    }
     $token = $input["credential"] ?? null;
     if (!is_string($token) || strlen($token) < 20) {
         fail("Neplatné přihlášení Google.", 401);
@@ -129,17 +147,25 @@ try {
         throw new RuntimeException("Required extension unavailable");
     }
     $stage = "DATABASE";
+    $pdo = db();
+    $pdo->beginTransaction();
     $query = db()->prepare(
         "INSERT INTO " .
             db_table("users") .
             " (google_sub, email, name, created_at) VALUES (?, ?, ?, UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email = VALUES(email), name = VALUES(name)",
     );
     $query->execute([$claims["sub"], $claims["email"], $name]);
+    $isNewUser = $query->rowCount() === 1;
     $query = db()->prepare(
         "SELECT id FROM " . db_table("users") . " WHERE google_sub = ?",
     );
     $query->execute([$claims["sub"]]);
     $id = $query->fetchColumn();
+    if ($isNewUser) {
+        require_once __DIR__ . "/starter-library.php";
+        seed_starter_library($pdo, (int) $id);
+    }
+    $pdo->commit();
     $stage = "SESSION";
     session_regenerate_id(true);
     $_SESSION = [
@@ -153,6 +179,9 @@ try {
         "csrf" => $_SESSION["csrf"],
     ]);
 } catch (Throwable $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     // Never expose exception messages: PDO messages can contain account details.
     $reference = "AUTH_" . $stage;
     if (

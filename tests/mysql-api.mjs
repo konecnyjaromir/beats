@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { spawn, execFileSync } from "node:child_process";
 import { generateKeyPairSync, sign, randomBytes } from "node:crypto";
-import { mkdtemp, mkdir, cp, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, cp, writeFile, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { initial } from "../src/model.js";
@@ -36,7 +36,7 @@ const quote = (s) =>
   "'" + s.replaceAll("\\", "\\\\").replaceAll("'", "\\'") + "'";
 await writeFile(
   path.join(root, "beats-services.php"),
-  `<?php if (!defined('BEATS_INTERNAL')) {http_response_code(404);exit;} return ['mode'=>'mysql','limits'=>['max_loops'=>2,'max_bars'=>1000],'database'=>['host'=>${quote(env.BEATS_TEST_DB_HOST)},'port'=>${Number(env.BEATS_TEST_DB_PORT)},'name'=>'${database}','user'=>${quote(env.BEATS_TEST_DB_USER)},'password'=>${quote(env.BEATS_TEST_DB_PASSWORD)},'prefix'=>'tenant_'],'google'=>['client_id'=>'test.apps.googleusercontent.com','allowed_emails'=>[]]];`,
+  `<?php if (!defined('BEATS_INTERNAL')) {http_response_code(404);exit;} return ['mode'=>'mysql','limits'=>['max_loops'=>8,'max_bars'=>1000],'database'=>['host'=>${quote(env.BEATS_TEST_DB_HOST)},'port'=>${Number(env.BEATS_TEST_DB_PORT)},'name'=>'${database}','user'=>${quote(env.BEATS_TEST_DB_USER)},'password'=>${quote(env.BEATS_TEST_DB_PASSWORD)},'prefix'=>'tenant_'],'google'=>['client_id'=>'test.apps.googleusercontent.com','allowed_emails'=>[]]];`,
 );
 await writeFile(
   path.join(root, "beats-config.php"),
@@ -137,6 +137,12 @@ try {
     "Google mode serves login without Basic Auth",
   );
   assert.equal((await a("api/loops.php")).status, 401);
+  const publicDemo = await a("api/demo.php");
+  assert.equal(publicDemo.status, 200);
+  assert.equal(publicDemo.data.length, 6);
+  assert.equal(publicDemo.headers.get("set-cookie"), null);
+  assert.ok(publicDemo.data.every((loop) => !loop.id && !loop.owner_id));
+  assert.equal((await a("api/starter-loops.php")).status, 404);
   assert.equal((await a("beats-services.php")).status, 404);
   assert.equal((await a("private/google-keys.php")).status, 404);
   const config = await a("api/config.php");
@@ -203,6 +209,55 @@ try {
       })
     ).status,
     200,
+  );
+  const seeds = (await a("api/loops.php")).data;
+  assert.equal(seeds.length, 6, "New accounts receive six starter rhythms");
+  assert.deepEqual(
+    seeds.map((s) => s.name).sort(),
+    [
+      "Eighth Note Feel – With Syncopation",
+      "Ghost Note Grooves",
+      "Half-Time Shuffle",
+      "Swing with feathered BD + rim click",
+      "Trioly proti rovným osminám",
+      "Blues Shuffle - 12 bars with turnaround",
+    ].sort(),
+  );
+  const trio = (
+    await a(
+      "api/loops.php?id=" + seeds.find((s) => s.name.startsWith("Trioly")).id,
+    )
+  ).data;
+  assert.ok(
+    trio.bars[0].rows
+      .find((r) => r.instrument === "ride")
+      .steps.every((v) => v === 2),
+  );
+  const blues = (
+    await a(
+      "api/loops.php?id=" + seeds.find((s) => s.name.startsWith("Blues")).id,
+    )
+  ).data;
+  assert.equal(blues.bars.length, 12);
+  assert.ok(
+    blues.bars[11].rows
+      .find((r) => r.instrument === "tomLow")
+      .steps.some(Boolean),
+  );
+  const bobSeeds = (await b("api/loops.php")).data;
+  assert.equal(bobSeeds.length, 6);
+  assert.ok(bobSeeds.every((s) => !seeds.some((a) => a.id === s.id)));
+  for (const s of seeds)
+    assert.equal((await a("api/loops.php?id=" + s.id, "DELETE")).status, 200);
+  for (const s of bobSeeds)
+    assert.equal((await b("api/loops.php?id=" + s.id, "DELETE")).status, 200);
+  const settingsPath = path.join(root, "beats-services.php");
+  await writeFile(
+    settingsPath,
+    (await readFile(settingsPath, "utf8")).replace(
+      "'max_loops'=>8",
+      "'max_loops'=>2",
+    ),
   );
   const p = initial();
   p.name = "Private loop";
@@ -279,6 +334,70 @@ try {
     "Account uses stable Google subject",
   );
   assert.equal((await a("api/loops.php?id=" + id, "DELETE")).status, 200);
+  const otherSession = client();
+  const otherNonce = (await otherSession("api/auth.php")).data.nonce;
+  assert.equal(
+    (
+      await otherSession("api/auth.php", "POST", {
+        credential: token(otherNonce, "alice"),
+      })
+    ).status,
+    200,
+  );
+  assert.equal(
+    (await a("api/loops.php")).data.length,
+    1,
+    "Signing in does not restore deleted examples",
+  );
+  assert.equal(
+    (
+      await a(
+        "api/auth.php",
+        "POST",
+        { action: "delete-account", confirm: true },
+        { "X-Beats-CSRF": "" },
+      )
+    ).status,
+    403,
+  );
+  assert.equal(
+    (await a("api/auth.php", "POST", { action: "delete-account" })).status,
+    400,
+  );
+  const deletedIds = (await a("api/loops.php")).data.map((p) => p.id);
+  assert.equal(
+    (
+      await a("api/auth.php", "POST", {
+        action: "delete-account",
+        confirm: true,
+      })
+    ).status,
+    200,
+  );
+  assert.equal((await a("api/loops.php")).status, 401);
+  assert.equal(
+    (await otherSession("api/loops.php")).status,
+    401,
+    "Old sessions lose access after deletion",
+  );
+  assert.equal(
+    (await b("api/loops.php")).data.length,
+    1,
+    "Other accounts remain untouched",
+  );
+  const newNonce = (await a("api/auth.php")).data.nonce;
+  assert.equal(
+    (await a("api/auth.php", "POST", { credential: token(newNonce, "alice") }))
+      .status,
+    200,
+  );
+  assert.equal(
+    (await a("api/loops.php")).data.length,
+    2,
+    "Fresh registration seeds within configured quota",
+  );
+  for (const oldId of deletedIds)
+    assert.equal((await a("api/loops.php?id=" + oldId)).status, 404);
   console.log(
     "PASS: MySQL auto-setup/custom prefix, signed Google tokens, sessions/CSRF, isolation, quotas, 1000 bars and logout.",
   );

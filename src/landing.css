@@ -1,3 +1,13 @@
+.landing-demo {
+  margin-top: 12px;
+  width: 280px;
+  max-width: 100%;
+  background: #c5ed82;
+  color: #1f2a16;
+  font-weight: 600;
+  border-color: #c5ed82;
+  padding: 13px;
+}
 .landing {
   --landing-green: #c5ed82;
   width: 100%;

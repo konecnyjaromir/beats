@@ -77,6 +77,10 @@ Existing loops remain compatible. Legacy global time signatures are applied to t
 
 ## Sign-in troubleshooting
 
+New Google accounts receive six editable starter rhythms, including a mixed-subdivision triplet example and a twelve-bar blues shuffle. They are inserted in the registration transaction, limited by the configured account/bar quotas. Existing accounts are never reseeded on login. The public demo uses the same examples in an isolated in-memory library and opens the triplet example automatically. Demo edits never reach the database; export JSON/ZIP before leaving or reloading.
+
+Signed-in users can permanently delete their account with confirmation. The operation uses the session owner's ID and CSRF protection, removes their loops through the database foreign-key cascade, and clears the session. Other sessions lose access because their user no longer exists. Backup retention remains the operator's responsibility. Signing in again creates a new account with fresh starter rhythms.
+
 Server failures display a safe diagnostic reference, also recorded in the PHP error log. No database credentials, token contents or exception messages are returned to the browser.
 
 - `AUTH_GOOGLE_CERTIFICATES`: check outbound HTTPS to `www.googleapis.com`, PHP's CA certificate configuration and access to `private/`.

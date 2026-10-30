@@ -7,6 +7,7 @@ import { TempoInput } from "./TempoInput";
 import { DivisionPicker } from "./DivisionPicker";
 import { WarmupToggle } from "./WarmupToggle";
 import { AuthGate } from "./AuthGate";
+import { LoopName } from "./LoopName";
 import { limits, requestHeaders } from "./auth.js";
 import {
   readLoopFiles,
@@ -24,7 +25,7 @@ const removeAudioUnlock = engine.installEarlyUnlock();
 if (import.meta.hot) import.meta.hot.dispose(removeAudioUnlock);
 document.documentElement.lang = language;
 document.title = t("BEATS — bicí studio");
-async function api(method = "GET", body, id) {
+async function serverApi(method = "GET", body, id) {
   const res = await fetch(
     `./api/loops.php${id ? "?id=" + encodeURIComponent(id) : ""}`,
     {
@@ -43,15 +44,18 @@ async function api(method = "GET", body, id) {
   if (!res.ok) throw Error(data.error || t("Chyba serveru."));
   return data;
 }
-function App({ user, onLogout }) {
-  const [project, setProject] = useState(null),
+function App({ user, onLogout, demo }) {
+  const api = demo?.request || serverApi;
+  const [project, setProject] = useState(() =>
+      demo ? normalizeProject(demo.first) : null,
+    ),
     [selected, setSelected] = useState(0),
     [playing, setPlaying] = useState(false),
     [loading, setLoading] = useState(false),
     [position, setPosition] = useState({ bar: 0, progress: 0 }),
     [library, setLibrary] = useState([]),
     [libraryLoading, setLibraryLoading] = useState(true),
-    [savedId, setSavedId] = useState(null),
+    [savedId, setSavedId] = useState(demo?.first.id || null),
     [dirty, setDirty] = useState(false),
     [message, setMessage] = useState(""),
     [volume, setVolume] = useState(75),
@@ -107,19 +111,20 @@ function App({ user, onLogout }) {
       tabs.scrollLeft += item.right - viewport.right;
   }, [playing, position.bar]);
   useEffect(() => {
+    if (demo) window.scrollTo({ top: 0, behavior: "instant" });
     refresh();
     return () => engine.stop();
   }, []);
   useEffect(() => {
     const fn = (e) => {
-      if (dirty) {
+      if (dirty || demo?.changed) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", fn);
     return () => window.removeEventListener("beforeunload", fn);
-  }, [dirty]);
+  }, [dirty, demo]);
   function stop() {
     engine.stop();
     setPlaying(false);
@@ -469,6 +474,35 @@ function App({ user, onLogout }) {
         </div>
       </aside>
       <main>
+        {demo && (
+          <div className="demo-banner" role="status">
+            <div>
+              <strong>{t("Demo bez registrace")}</strong>
+              <p>
+                {t(
+                  "Smyčky můžeš libovolně měnit. Zůstanou jen v této otevřené stránce; před odchodem je exportuj do JSON nebo ZIP.",
+                )}
+              </p>
+            </div>
+            <button
+              disabled={loading || transferBusy}
+              onClick={() =>
+                setConfirm({
+                  title: t("Ukončit demo"),
+                  text: t(
+                    "Ukončením dema se smažou všechny jeho změny. Exportované soubory ti zůstanou. Pokračovat?",
+                  ),
+                  action: () => {
+                    stop();
+                    onLogout();
+                  },
+                })
+              }
+            >
+              {t("Ukončit demo / přihlásit se")}
+            </button>
+          </div>
+        )}
         {user && (
           <div className="account-bar">
             <span>
@@ -487,6 +521,33 @@ function App({ user, onLogout }) {
               }
             >
               {t("Odhlásit se")}
+            </button>
+            <button
+              className="danger"
+              disabled={transferBusy || loading}
+              onClick={() =>
+                setConfirm({
+                  title: t("Smazat účet"),
+                  label: t("Trvale smazat účet"),
+                  text: t(
+                    "Účet {0} a všechny jeho smyčky budou trvale smazány. Zmizí i neuložené změny. Tuto akci nelze vrátit. Před smazáním si můžeš exportovat knihovnu do ZIP. Opravdu pokračovat?",
+                    user.email,
+                  ),
+                  action: async () => {
+                    stop();
+                    setLoading(true);
+                    try {
+                      await onLogout(true);
+                    } catch (e) {
+                      setMessage(e.message);
+                    } finally {
+                      setLoading(false);
+                    }
+                  },
+                })
+              }
+            >
+              {t("Smazat účet")}
             </button>
           </div>
         )}
@@ -514,18 +575,15 @@ function App({ user, onLogout }) {
         )}
         {project && (
           <>
-            <header>
-              <div>
+            <header className="project-header">
+              <div className="project-heading">
                 <div className="eyebrow">
                   {" "}
                   {t("BICÍ STUDIO")} <span>/</span> {t("SEKVENCER")}{" "}
                 </div>
-                <input
-                  className="title"
-                  aria-label={t("Název smyčky")}
-                  maxLength={80}
+                <LoopName
                   value={project.name}
-                  onChange={(e) => edit({ name: e.target.value })}
+                  onChange={(name) => edit({ name })}
                 />
                 <div className="subtitle">
                   <span className={"small-dot " + (dirty ? "unsaved" : "")} />
@@ -969,7 +1027,7 @@ function App({ user, onLogout }) {
             aria-modal="true"
             aria-label={t("Potvrzení")}
           >
-            <h2>{t("Ještě jeden úder…")}</h2>
+            <h2>{confirm.title || t("Ještě jeden úder…")}</h2>
             <p>{confirm.text}</p>
             <div>
               <button autoFocus onClick={() => setConfirm(null)}>
@@ -984,7 +1042,7 @@ function App({ user, onLogout }) {
                 }}
               >
                 {" "}
-                {t("Potvrdit")}{" "}
+                {confirm.label || t("Potvrdit")}{" "}
               </button>
             </div>
           </div>
@@ -995,6 +1053,13 @@ function App({ user, onLogout }) {
 }
 createRoot(document.getElementById("root")).render(
   <AuthGate>
-    {(user, onLogout) => <App user={user} onLogout={onLogout} />}
+    {(user, onLogout, demo) => (
+      <App
+        key={demo ? "demo" : "account"}
+        user={user}
+        onLogout={onLogout}
+        demo={demo}
+      />
+    )}
   </AuthGate>,
 );

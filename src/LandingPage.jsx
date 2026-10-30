@@ -46,7 +46,7 @@ export function LandingPage({ children }) {
               {children}
               <p className="landing-signin-note">
                 {t(
-                  "Stačí Google účet. Tvoje smyčky zůstanou ve tvé vlastní knihovně.",
+                  "Vyzkoušej studio bez účtu. Pro vlastní uloženou knihovnu se přihlas přes Google.",
                 )}
               </p>
             </div>

@@ -13,6 +13,8 @@ A browser-based drum sequencer built with React, Web Audio and PHP. Create acous
 - Searchable loop library, collapsible sidebar, fullscreen mode and responsive layout.
 - Two configurable backends: JSON files with shared Basic Auth access, or MySQL with Google sign-in and private per-user libraries.
 - JSON export of the open loop, ZIP export of the entire library, and batch JSON/ZIP import.
+- No-registration demo in Google mode: six editable examples, opening with simultaneous straight eighth notes and triplets. Demo edits stay in page memory and can be exported.
+- Six starter rhythms for new Google accounts, including a twelve-bar blues shuffle with a final fill; confirmed account deletion removes the private library.
 - Configurable limits (default: 1,000 loops per account and 1,000 bars per loop) and English/Czech localization.
 
 ## Requirements

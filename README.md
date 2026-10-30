@@ -78,7 +78,9 @@ Click a step to cycle through off, soft, medium and strong. A row's divisions al
 
 Select a bar before changing its time signature. New bars inherit the selected bar's signature; duplicates preserve its instruments, hits and signature. Editing the rhythm stops playback. Tempo can be typed freely and is committed on Enter or blur; Escape restores its previous value.
 
-Save updates the selected saved loop; Save a copy creates another one. A browser-local draft helps preserve unfinished work, while the library is stored on the PHP server. Search ignores case and accents. The sidebar remembers its collapsed state. Fullscreen depends on browser support and can be exited with Escape.
+The application always starts on the home screen with no loop open. Create a blank loop or open a saved loop from the home-screen cards or sidebar. Clicking the BEATS logo returns home and stops playback; leaving unsaved edits requires confirmation. Refreshing does not automatically reopen a loop or a browser-local draft.
+
+Save updates the selected saved loop; Save a copy creates another one. The library is stored on the PHP server. Search ignores case and accents and is available on both the home screen and sidebar. The sidebar remembers its collapsed state. Fullscreen depends on browser support and can be exited with Escape.
 
 ## Deployment and updates
 

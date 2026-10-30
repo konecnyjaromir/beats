@@ -1,5 +1,15 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Začni novou smyčkou": "Start with a new loop",
+  "Vytvoř novou smyčku, nebo si níže otevři některou z uložených. Žádná smyčka teď není otevřená.":
+    "Create a new loop or open one of your saved loops below. No loop is currently open.",
+  "＋ Vytvořit smyčku": "＋ Create loop",
+  "Uložené smyčky": "Saved loops",
+  "Načítání…": "Loading…",
+  "Zatím tu nejsou žádné uložené smyčky. Vytvoř svou první.":
+    "No saved loops yet. Create your first one.",
+  "Otevřít smyčku": "Open loop",
+  "BEATS – úvodní obrazovka": "BEATS – Home",
   "PHP server není dostupný. Spusťte backend podle README.":
     "PHP is unavailable. Start the backend as described in the README.",
   "Chyba serveru.": "Server error.",

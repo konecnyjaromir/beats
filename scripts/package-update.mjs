@@ -1,54 +1,53 @@
-import { mkdir, mkdtemp, cp, rm } from "node:fs/promises";
-import { spawnSync } from "node:child_process";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { tmpdir } from "node:os";
+import { zipSync } from "fflate";
 
-// An update must never contain user loops or authentication credentials.
-const staging = await mkdtemp(path.join(tmpdir(), "beats-update-"));
-try {
-  for (const name of [
-    "index.php",
-    "beats-config.php",
-    "api",
-    "assets",
-    "samples",
-  ]) {
-    await cp(path.resolve("dist", name), path.join(staging, name), {
-      recursive: true,
-    });
+const serverPackage = process.argv.includes("--server");
+const files = {};
+async function addTree(source, destination) {
+  for (const entry of await readdir(source, { withFileTypes: true })) {
+    const target = destination + "/" + entry.name;
+    if (entry.isDirectory())
+      await addTree(path.join(source, entry.name), target);
+    else if (entry.isFile())
+      files[target] = new Uint8Array(
+        await readFile(path.join(source, entry.name)),
+      );
   }
-  const output = path.resolve("beats-update.zip");
-  await rm(output, { force: true });
-  let result;
-  if (process.platform === "win32") {
-    // Pass paths as environment variables, never interpolate them into shell code.
-    result = spawnSync(
-      "powershell.exe",
-      [
-        "-NoProfile",
-        "-NonInteractive",
-        "-Command",
-        "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory($env:BEATS_PACKAGE_SOURCE,$env:BEATS_PACKAGE_TARGET)",
-      ],
-      {
-        env: {
-          ...process.env,
-          BEATS_PACKAGE_SOURCE: staging,
-          BEATS_PACKAGE_TARGET: output,
-        },
-        stdio: "inherit",
-      },
-    );
-  } else {
-    result = spawnSync("zip", ["-qr", output, "."], {
-      cwd: staging,
-      stdio: "inherit",
-    });
-  }
-  if (result.error) throw result.error;
-  if (result.status !== 0)
-    throw Error("Could not create update archive. Install zip on Linux/macOS.");
-  console.log("Created beats-update.zip (no credentials or user data).");
-} finally {
-  await rm(staging, { recursive: true, force: true });
 }
+for (const name of [
+  "api",
+  "assets",
+  "samples",
+  "licenses",
+  "vendor",
+  "database",
+]) {
+  await addTree(path.join("dist", name), name);
+}
+for (const name of [
+  "index.php",
+  "beats-config.php",
+  "beats-services.example.php",
+  "privacy.html",
+  ".htaccess",
+  ...(serverPackage ? ["beats-services.php"] : []),
+]) {
+  files[name] = new Uint8Array(await readFile(path.join("dist", name)));
+}
+if (serverPackage) {
+  // Include only the empty storage guards, never existing user loops or caches.
+  for (const name of [".htaccess", "index.php"])
+    files["private/" + name] = new Uint8Array(
+      await readFile(path.join("public/private", name)),
+    );
+  files["DEPLOYMENT.md"] = new Uint8Array(await readFile("DEPLOYMENT.md"));
+}
+const output = serverPackage ? "beats-server.zip" : "beats-update.zip";
+// Explicit forward-slash entry names work with both Linux hosting and Windows.
+await writeFile(output, zipSync(files, { level: 6 }));
+console.log(
+  serverPackage
+    ? "Created beats-server.zip (contains private service credentials; do not publish)."
+    : "Created beats-update.zip (no credentials or user data).",
+);

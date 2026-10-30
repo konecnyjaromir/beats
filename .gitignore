@@ -6,9 +6,15 @@ beats-private/
 public/private/*.json.php
 update/
 beats-update.zip
+beats-server.zip
 exports/
 /beats-auth.php
 /beats-config.php
+/db_oauth.txt
+/smycky/
+/beats-import.zip
+/beats-services.php
+/vendor/
 /preview.*
 /zadani.txt
 /NASAZENI.md

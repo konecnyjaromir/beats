@@ -18,6 +18,10 @@ const temp = await mkdtemp(path.join(tmpdir(), "beats-basic-test-"));
 const root = path.join(temp, "web");
 await mkdir(path.join(root, "beats"), { recursive: true });
 await cp("dist", path.join(root, "beats"), { recursive: true });
+await writeFile(
+  path.join(root, "beats/beats-services.php"),
+  "<?php if (!defined('BEATS_INTERNAL')) { http_response_code(404); exit; } return ['mode'=>'json'];",
+);
 for (const name of await readdir(path.join(root, "beats/private"))) {
   if (/^[a-f0-9]{32}\.json\.php$/.test(name))
     await rm(path.join(root, "beats/private", name));

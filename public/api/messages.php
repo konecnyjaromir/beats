@@ -1,6 +1,18 @@
 <?php
 // API error translations. User-provided names and data are never translated.
 return [
+    "Přihlaste se přes Google." => "Sign in with Google.",
+    "Neplatné přihlášení Google." => "Invalid Google sign-in.",
+    "Příliš mnoho pokusů. Zkuste to za minutu." =>
+        "Too many attempts. Try again in a minute.",
+    "Tento účet nemá povolený přístup." =>
+        "This account is not allowed to sign in.",
+    "Přihlášení není dostupné. Zkontrolujte konfiguraci služeb a databázi." =>
+        "Sign-in is unavailable. Check the service configuration and database.",
+    "Počet taktů překračuje povolený rozsah." =>
+        "The number of bars is outside the configured range.",
+    "Byl dosažen limit uložených smyček." =>
+        "The saved-loop limit has been reached.",
     "Vyplňte název smyčky (max. 80 znaků)." =>
         "Enter a loop name (up to 80 characters).",
     "Neplatné tempo." => "Invalid tempo.",

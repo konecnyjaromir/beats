@@ -6,6 +6,15 @@ import { DrumEngine } from "./audio";
 import { TempoInput } from "./TempoInput";
 import { DivisionPicker } from "./DivisionPicker";
 import { WarmupToggle } from "./WarmupToggle";
+import { AuthGate } from "./AuthGate";
+import { limits, requestHeaders } from "./auth.js";
+import {
+  readLoopFiles,
+  loopJson,
+  loopFilename,
+  zipLoops,
+  downloadFile,
+} from "./loopFiles.js";
 import { FullscreenButton } from "./FullscreenButton";
 import { HomeScreen } from "./HomeScreen";
 import { copyName } from "./copyName";
@@ -21,7 +30,7 @@ async function api(method = "GET", body, id) {
     {
       method,
       credentials: "same-origin",
-      headers: { "Content-Type": "application/json", "X-Beats-Request": "1" },
+      headers: requestHeaders(),
       ...(body ? { body: JSON.stringify(body) } : {}),
     },
   );
@@ -34,7 +43,7 @@ async function api(method = "GET", body, id) {
   if (!res.ok) throw Error(data.error || t("Chyba serveru."));
   return data;
 }
-function App() {
+function App({ user, onLogout }) {
   const [project, setProject] = useState(null),
     [selected, setSelected] = useState(0),
     [playing, setPlaying] = useState(false),
@@ -55,6 +64,8 @@ function App() {
     }
   });
   const [search, setSearch] = useState("");
+  const importInput = useRef(null);
+  const [transferBusy, setTransferBusy] = useState(false);
   const [adapterWarmup, setAdapterWarmup] = useState(() => {
     try {
       return localStorage.getItem("beats-adapter-warmup-v2") === "true";
@@ -159,6 +170,49 @@ function App() {
       setMessage(e.message);
     } finally {
       setLibraryLoading(false);
+    }
+  }
+  async function importLoops(files) {
+    if (!files.length) return;
+    setTransferBusy(true);
+    setMessage("");
+    let imported = 0;
+    try {
+      const loops = await readLoopFiles(files, limits.maxLoops);
+      const currentLibrary = await api();
+      if (currentLibrary.length + loops.length > limits.maxLoops)
+        throw Error(
+          t("Import by překročil limit {0} smyček.", limits.maxLoops),
+        );
+      for (const loop of loops) {
+        if (loop.bars.length > limits.maxBars)
+          throw Error(t("Smyčka překračuje limit {0} taktů.", limits.maxBars));
+      }
+      for (const loop of loops) {
+        await api("POST", loop);
+        imported++;
+      }
+      setMessage(t("Importováno {0} smyček.", imported));
+    } catch (e) {
+      setMessage(t("Importováno {0} smyček. {1}", imported, e.message));
+    } finally {
+      await refresh();
+      setTransferBusy(false);
+    }
+  }
+  async function exportAll() {
+    setTransferBusy(true);
+    setMessage("");
+    try {
+      const list = await api();
+      const loops = [];
+      for (const entry of list)
+        loops.push(await api("GET", undefined, entry.id));
+      downloadFile(await zipLoops(loops), "beats-loops.zip", "application/zip");
+    } catch (e) {
+      setMessage(e.message);
+    } finally {
+      setTransferBusy(false);
     }
   }
   async function play() {
@@ -378,6 +432,35 @@ function App() {
           )}
         </div>
         <div className="side-bottom">
+          <div className="library-transfer">
+            <input
+              ref={importInput}
+              type="file"
+              accept=".json,.zip,application/json,application/zip"
+              multiple
+              hidden
+              onChange={(event) => {
+                const files = Array.from(event.target.files ?? []);
+                event.target.value = "";
+                importLoops(files);
+              }}
+            />
+            <button
+              disabled={transferBusy || loading}
+              onClick={() => importInput.current.click()}
+            >
+              {t("Import JSON / ZIP")}
+            </button>
+            <button
+              disabled={transferBusy || loading || !library.length}
+              onClick={exportAll}
+            >
+              {t("Export všeho do ZIP")}
+            </button>
+            {transferBusy && (
+              <span role="status">{t("Zpracovávám soubory…")}</span>
+            )}
+          </div>
           <span className="status-dot" /> {t("AKUSTICKÁ SADA")}{" "}
           <p>
             AVL Black Pearl · {instruments.length} {t("nástrojů")} <br />{" "}
@@ -386,6 +469,27 @@ function App() {
         </div>
       </aside>
       <main>
+        {user && (
+          <div className="account-bar">
+            <span>
+              {user.name} · {user.email}
+            </span>
+            <button
+              disabled={transferBusy || loading}
+              onClick={() =>
+                guard(async () => {
+                  try {
+                    await onLogout();
+                  } catch (e) {
+                    setMessage(e.message);
+                  }
+                })
+              }
+            >
+              {t("Odhlásit se")}
+            </button>
+          </div>
+        )}
         {!project && (
           <HomeScreen
             loops={filteredLibrary}
@@ -437,6 +541,17 @@ function App() {
                   {t("Zavřít")}
                 </button>
                 <FullscreenButton onError={setMessage} />
+                <button
+                  onClick={() =>
+                    downloadFile(
+                      loopJson(project),
+                      loopFilename(project.name),
+                      "application/json",
+                    )
+                  }
+                >
+                  {t("Export JSON")}
+                </button>
                 {savedId && (
                   <button disabled={loading} onClick={() => save(true)}>
                     {" "}
@@ -584,7 +699,7 @@ function App() {
                 ))}
                 <button
                   className="add-bar"
-                  disabled={project.bars.length >= 64}
+                  disabled={project.bars.length >= limits.maxBars}
                   onClick={() => {
                     edit((p) => ({
                       ...p,
@@ -615,7 +730,7 @@ function App() {
                 </div>
                 <div className="bar-actions">
                   <button
-                    disabled={project.bars.length >= 64}
+                    disabled={project.bars.length >= limits.maxBars}
                     onClick={() => {
                       const copied = structuredClone(current);
                       copied.id = uid();
@@ -878,4 +993,8 @@ function App() {
     </div>
   );
 }
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(
+  <AuthGate>
+    {(user, onLogout) => <App user={user} onLogout={onLogout} />}
+  </AuthGate>,
+);

@@ -30,6 +30,8 @@ test("Every static UI translation key has a nonempty English entry", () => {
     "TempoInput.jsx",
     "WarmupToggle.jsx",
     "DivisionPicker.jsx",
+    "AuthGate.jsx",
+    "loopFiles.js",
   ]) {
     const source = readFileSync(
       new URL("../src/" + file, import.meta.url),

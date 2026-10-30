@@ -1,5 +1,35 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Přihlášení Google se nepodařilo načíst.": "Could not load Google sign-in.",
+  "Přihlášení do studia": "Sign in to your studio",
+  "Přihlas se přes Google. Při prvním přihlášení se vytvoří účet. Tvé smyčky uvidíš jen ty.":
+    "Sign in with Google. Your first sign-in creates an account. Only you can see your loops.",
+  "Zkusit znovu": "Try again",
+  "Limit účtu: {0} smyček, až {1} taktů na smyčku.":
+    "Account limit: {0} loops, up to {1} bars per loop.",
+  "Ochrana osobních údajů": "Privacy",
+  "Odhlásit se": "Sign out",
+  "Soubor smyčky překračuje 16 MB.": "The loop file exceeds 16 MB.",
+  "Neplatný JSON v souboru {0}.": "Invalid JSON in {0}.",
+  "Soubor {0} neobsahuje smyčku BEATS.":
+    "File {0} does not contain a BEATS loop.",
+  "Import obsahuje příliš mnoho smyček.": "The import contains too many loops.",
+  "Import překračuje 64 MB. Rozděl soubory do menších dávek.":
+    "Import exceeds 64 MB. Split the files into smaller batches.",
+  "ZIP se nepodařilo rozbalit.": "Could not extract the ZIP file.",
+  "Rozbalený import je příliš velký (16 MB na soubor, 64 MB celkem).":
+    "The extracted import is too large (16 MB per file, 64 MB total).",
+  "Nebyly nalezeny žádné JSON smyčky.": "No JSON loops were found.",
+  "Import by překročil limit {0} smyček.":
+    "Import would exceed the limit of {0} loops.",
+  "Smyčka překračuje limit {0} taktů.":
+    "The loop exceeds the limit of {0} bars.",
+  "Importováno {0} smyček.": "Imported {0} loops.",
+  "Importováno {0} smyček. {1}": "Imported {0} loops. {1}",
+  "Import JSON / ZIP": "Import JSON / ZIP",
+  "Export všeho do ZIP": "Export all as ZIP",
+  "Zpracovávám soubory…": "Processing files…",
+  "Export JSON": "Export JSON",
   Storno: "Cancel",
   "Zahřátí USB adaptéru": "USB adapter warm-up",
   "Warm-up přehraje slabý úder do ráfku pro probuzení zvukového adaptéru. Za 500 ms začne smyčka. Zapni, pokud ve sluchátkách přes adaptér chybí první úder. Opakování smyčky je bez zahřívacího úderu a prodlevy.":

@@ -1,0 +1,15 @@
+{
+  "name": "beats/studio",
+  "description": "Optional Google authentication for the BEATS PHP backend",
+  "type": "project",
+  "require": {
+    "php": ">=8.2",
+    "ext-openssl": "*",
+    "ext-curl": "*",
+    "ext-mbstring": "*",
+    "firebase/php-jwt": "^7.0"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

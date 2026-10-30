@@ -10,18 +10,19 @@ import {
 const html = await readFile("dist/index.html", "utf8");
 const guard = `<?php
 require_once __DIR__ . '/api/bootstrap.php';
-try { require_login(); }
+try { if (!mysql_mode()) require_login(); }
 catch (Throwable $e) {
     error_log((string)$e);
     fail('Přihlášení není dostupné. Zkontrolujte soukromou konfiguraci beats-auth.php.', 500);
 }
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store');
+header('Cross-Origin-Opener-Policy: same-origin-allow-popups');
 ?>
 `;
 await writeFile("dist/index.php", guard + html);
 await unlink("dist/index.html");
-for (const name of ["beats-auth", "beats-config"]) {
+for (const name of ["beats-auth", "beats-config", "beats-services"]) {
   let source = `${name}.php`;
   try {
     await access(source);

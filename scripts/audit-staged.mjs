@@ -8,7 +8,7 @@ const files = execFileSync(
   .split("\0")
   .filter(Boolean);
 const privatePath =
-  /^(?:beats-auth\.php$|beats-config\.php$|(?:dist|node_modules|\.runtime|storage|exports|update|beats-private)\/)|(?:^|\/)private\/.*\.json\.php$|\.(?:zip|log)$/i;
+  /^(?:beats-auth\.php$|beats-config\.php$|beats-services\.php$|db_oauth\.txt$|(?:vendor|dist|node_modules|\.runtime|storage|exports|update|beats-private)\/)|(?:^|\/)private\/.*\.json\.php$|\.(?:zip|log)$/i;
 for (const file of files) {
   if (privatePath.test(file))
     throw Error(`Private/generated file is staged: ${file}`);

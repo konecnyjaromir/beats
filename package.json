@@ -13,9 +13,12 @@
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.js",
     "test:api": "node tests/api.mjs",
-    "package:update": "node scripts/package-update.mjs"
+    "test:mysql": "node tests/mysql-api.mjs",
+    "package:update": "node scripts/package-update.mjs",
+    "package:server": "node scripts/package-update.mjs --server"
   },
   "dependencies": {
+    "fflate": "^0.8.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

@@ -70,6 +70,63 @@ a {
   display: flex;
   min-height: 100vh;
 }
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.login-card {
+  width: min(100%, 480px);
+  padding: 36px;
+  border: 1px solid #394137;
+  border-radius: 18px;
+  background: #202328;
+}
+.login-card h1 {
+  font-size: 42px;
+  letter-spacing: -2px;
+}
+.login-card h2 {
+  font-size: 22px;
+}
+.login-card p {
+  color: #b6bec4;
+  line-height: 1.7;
+}
+.login-card a {
+  color: #c5ed82;
+  font-size: 13px;
+}
+.google-signin {
+  min-height: 44px;
+  margin: 24px 0;
+}
+.login-card .login-limits,
+.login-card .app-version {
+  font-size: 12px;
+}
+.account-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #b6bec4;
+}
+.account-bar span {
+  overflow-wrap: anywhere;
+}
+.library-transfer {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.library-transfer button {
+  font-size: 11px;
+}
 .home-screen {
   max-width: 1100px;
   margin: 0 auto;

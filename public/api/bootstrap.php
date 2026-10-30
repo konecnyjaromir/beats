@@ -4,6 +4,8 @@ declare(strict_types=1);
 header("Content-Type: application/json; charset=utf-8");
 header("Cache-Control: no-store");
 header("X-Content-Type-Options: nosniff");
+require_once __DIR__ . "/settings.php";
+require_once __DIR__ . "/session.php";
 
 function respond($data, int $status = 200): never
 {
@@ -65,6 +67,21 @@ function read_loop(string $file): array
 
 function require_login(): void
 {
+    if (mysql_mode()) {
+        if (!session_user()) {
+            fail("Přihlaste se přes Google.", 401);
+        }
+        if (
+            !in_array(
+                $_SERVER["REQUEST_METHOD"] ?? "GET",
+                ["GET", "HEAD"],
+                true,
+            )
+        ) {
+            require_write_request(true);
+        }
+        return;
+    }
     $configPath = dirname(__DIR__) . "/beats-auth.php";
     if (!is_readable($configPath)) {
         throw new RuntimeException(

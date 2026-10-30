@@ -1,5 +1,9 @@
 # Third-party notices
 
+## ZIP and authentication libraries
+
+ZIP import/export uses `fflate` (MIT), installed through npm. Its license is included in `public/licenses/fflate-LICENSE.txt` and the deployment archives. Google ID-token signatures are verified with `firebase/php-jwt` (BSD-3-Clause), pinned in `composer.lock`; the Composer vendor directory includes its license. Neither library changes the licensing of the drum recordings.
+
 ## AVL Black Pearl recordings
 
 `public/samples/*.wav` contains the **BEATS AVL Black Pearl selection**, a subset of AVL Drumkits by Glen MacArthur (2015).

@@ -30,9 +30,9 @@ function validate(array $p): array
         !is_array($p["bars"] ?? null) ||
         !array_is_list($p["bars"]) ||
         count($p["bars"]) < 1 ||
-        count($p["bars"]) > 64
+        count($p["bars"]) > app_limits()["max_bars"]
     ) {
-        fail("Smyčka musí mít 1–64 taktů.");
+        fail("Počet taktů překračuje povolený rozsah.");
     }
     $instruments = [
         "kick",
@@ -117,6 +117,49 @@ function validate(array $p): array
         "bars" => $bars,
     ];
 }
+function loop_summary(array $p): array
+{
+    $meters = array_values(
+        array_unique(
+            array_map(
+                fn($b) => $b["numerator"] . "/" . $b["denominator"],
+                $p["bars"],
+            ),
+        ),
+    );
+    return [
+        "id" => $p["id"],
+        "name" => $p["name"],
+        "bpm" => $p["bpm"],
+        "numerator" => $p["bars"][0]["numerator"],
+        "denominator" => $p["bars"][0]["denominator"],
+        "meters" => $meters,
+        "barCount" => count($p["bars"]),
+        "updatedAt" => $p["updatedAt"],
+    ];
+}
+function read_loop_input(): array
+{
+    if (!str_starts_with($_SERVER["CONTENT_TYPE"] ?? "", "application/json")) {
+        fail("Očekáván JSON.", 415);
+    }
+    $raw = file_get_contents("php://input", false, null, 0, 16777217);
+    if (strlen($raw) > 16777216) {
+        fail("Smyčka je příliš velká.", 413);
+    }
+    try {
+        $input = json_decode($raw, true, 64, JSON_THROW_ON_ERROR);
+    } catch (JsonException $e) {
+        fail("Neplatný JSON.");
+    }
+    if (!is_array($input)) {
+        fail("Neplatná smyčka.");
+    }
+    return $input;
+}
+if (defined("BEATS_LIBRARY_ONLY")) {
+    return;
+}
 try {
     require_login();
     $method = $_SERVER["REQUEST_METHOD"];
@@ -133,8 +176,8 @@ try {
             fail("Požadavek z jiné domény není povolen.", 403);
         }
     }
-    $dir = storage_dir();
-    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+    $dir = mysql_mode() ? null : storage_dir();
+    if ($dir !== null && !is_dir($dir) && !mkdir($dir, 0750, true)) {
         throw new RuntimeException("storage");
     }
     $id = $_GET["id"] ?? null;
@@ -143,6 +186,10 @@ try {
         (!is_string($id) || !preg_match('/^[a-f0-9]{32}$/D', $id))
     ) {
         fail("Neplatné ID.");
+    }
+    if (mysql_mode()) {
+        require_once __DIR__ . "/mysql-loops.php";
+        mysql_loops($method, $id);
     }
     if ($method === "GET") {
         if ($id !== null) {
@@ -155,24 +202,7 @@ try {
         $list = [];
         foreach (glob($dir . "/*.json.php") as $file) {
             $p = normalize_loop(read_loop($file));
-            $meters = array_values(
-                array_unique(
-                    array_map(
-                        fn($b) => $b["numerator"] . "/" . $b["denominator"],
-                        $p["bars"],
-                    ),
-                ),
-            );
-            $list[] = [
-                "id" => $p["id"],
-                "name" => $p["name"],
-                "bpm" => $p["bpm"],
-                "numerator" => $p["bars"][0]["numerator"],
-                "denominator" => $p["bars"][0]["denominator"],
-                "meters" => $meters,
-                "barCount" => count($p["bars"]),
-                "updatedAt" => $p["updatedAt"],
-            ];
+            $list[] = loop_summary($p);
         }
         usort($list, fn($a, $b) => strcmp($b["updatedAt"], $a["updatedAt"]));
         respond($list);
@@ -194,21 +224,7 @@ try {
         }
         respond(["ok" => true]);
     }
-    if (!str_starts_with($_SERVER["CONTENT_TYPE"] ?? "", "application/json")) {
-        fail("Očekáván JSON.", 415);
-    }
-    $raw = file_get_contents("php://input", false, null, 0, 1048577);
-    if (strlen($raw) > 1048576) {
-        fail("Smyčka je příliš velká.", 413);
-    }
-    try {
-        $input = json_decode($raw, true, 64, JSON_THROW_ON_ERROR);
-    } catch (JsonException $e) {
-        fail("Neplatný JSON.");
-    }
-    if (!is_array($input)) {
-        fail("Neplatná smyčka.");
-    }
+    $input = read_loop_input();
     $p = validate($input);
     $id = $input["id"] ?? null;
     if (
@@ -220,6 +236,12 @@ try {
     $exists = $id !== null;
     if ($exists && !is_file($dir . "/" . $id . ".json.php")) {
         fail("Smyčka nebyla nalezena.", 404);
+    }
+    if (
+        !$exists &&
+        count(glob($dir . "/*.json.php")) >= app_limits()["max_loops"]
+    ) {
+        fail("Byl dosažen limit uložených smyček.", 409);
     }
     $id ??= bin2hex(random_bytes(16));
     $p["id"] = $id;

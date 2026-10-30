@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir, cp } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 
 const versionFile = new URL("../build-version.json", import.meta.url);
@@ -32,6 +32,9 @@ try {
   status = result.status ?? 1;
   if (status === 0) {
     await import("./php-entry.mjs");
+    await cp("vendor", "dist/vendor", { recursive: true });
+    await cp("database", "dist/database", { recursive: true });
+    await cp("beats-services.example.php", "dist/beats-services.example.php");
     await writeFile(
       versionFile,
       JSON.stringify({ build: nextBuild }, null, 2) + "\n",

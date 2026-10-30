@@ -7,16 +7,19 @@ A browser-based drum sequencer built with React, Web Audio and PHP. Create acous
 - 18 drum and percussion sounds from AVL Black Pearl, bundled locally with attribution.
 - Three hit strengths, including quiet ghost notes. Each strength uses a separate recording; additional gain shaping widens the dynamic range.
 - Independent time signatures for every bar: 3–8 beats over quarter, eighth or sixteenth notes.
-- 1–64 equally spaced steps per row, up to 32 rows per bar and 64 bars per loop.
+- 1–64 equally spaced steps per row, up to 32 rows per bar and 1,000 bars per loop by default.
 - Tempo from 30 to 300 BPM, measured in quarter notes per minute.
 - Loop playback with a moving playhead and automatic navigation to the active bar.
 - Searchable loop library, collapsible sidebar, fullscreen mode and responsive layout.
-- PHP storage without a database, HTTP Basic Authentication and configuration-based English/Czech localization.
+- Two configurable backends: JSON files with shared Basic Auth access, or MySQL with Google sign-in and private per-user libraries.
+- JSON export of the open loop, ZIP export of the entire library, and batch JSON/ZIP import.
+- Configurable limits (default: 1,000 loops per account and 1,000 bars per loop) and English/Czech localization.
 
 ## Requirements
 
 - Node.js 20.19+ or 22.12+ for building the frontend.
-- PHP 8.1+ for serving the application and running API tests.
+- PHP 8.2+ with OpenSSL, cURL and mbstring; PDO MySQL for the database mode.
+- Composer for installing PHP dependencies locally. The server ZIP includes them; Composer is not needed on the host.
 - A PHP-capable web host; HTTPS is required for public deployments using Basic Auth.
 
 Node.js is not needed on the production host.
@@ -25,8 +28,10 @@ Node.js is not needed on the production host.
 
 ```sh
 npm ci
+composer install --no-dev --prefer-dist
 cp beats-auth.example.php beats-auth.php
 cp beats-config.example.php beats-config.php
+cp beats-services.example.php beats-services.php
 ```
 
 Configure at least one user in `beats-auth.php`. Generate a password hash locally using PHP's `password_hash()` function, then paste **only the hash** into the users map:
@@ -70,19 +75,23 @@ To switch to Czech, change `'en'` to `'cs'`. To switch back, use `'en'` again. M
 - UI labels, instrument names, accessibility labels, default names and API errors follow the selected language. Existing user-authored loop names and musical data are never translated or rewritten.
 - Your local configuration is not committed. A deployment can therefore remain Czech while the public repository defaults to English.
 
-The frontend receives only the selected language through an authenticated configuration endpoint. Password hashes are never sent to it.
+The frontend receives the language, public Google client ID, authentication mode and limits. Database credentials and password hashes are never sent to it.
 
 ## Using the sequencer
 
 Click a step to cycle through off, soft, medium and strong. A row's divisions always cover the **whole bar**: in 4/4, 16 divisions produces sixteenth notes and 3 produces a half-note triplet. Use 12 for an eighth-note triplet grid or 24 for sixteenth-note sextuplets.
 
-Select a bar before changing its time signature. New bars inherit the selected bar's signature; duplicates preserve its instruments, hits and signature. Editing the rhythm stops playback. Tempo can be typed freely and is committed on Enter or blur; Escape restores its previous value.
+Select a bar before changing its time signature. New bars inherit the selected bar's signature; duplicates preserve its instruments, hits and signature. Editing the rhythm stops playback. Tempo has repeatable minus/plus buttons and a dialog with numeric entry and a slider. An optional USB-adapter warm-up plays a soft rim hit 500 ms before starting the loop.
 
 The application always starts on the home screen with no loop open. Create a blank loop or open a saved loop from the home-screen cards or sidebar. Clicking the BEATS logo returns home and stops playback; leaving unsaved edits requires confirmation. Refreshing does not automatically reopen a loop or a browser-local draft.
 
 Save updates the selected saved loop; Save a copy creates another one. The library is stored on the PHP server. Search ignores case and accents and is available on both the home screen and sidebar. The sidebar remembers its collapsed state. Fullscreen depends on browser support and can be exited with Escape.
 
 ## Deployment and updates
+
+For MySQL + Google sign-in, follow [the database setup guide](DEPLOYMENT.md#mysql-and-google-sign-in). Set `mode` to `mysql` in `beats-services.php`; omit that file or use `json` to keep the original shared file library. The table prefix, allowed Google emails, and limits are configurable. These modes do not automatically merge or transfer user data.
+
+The import button accepts multiple JSON files or a ZIP containing JSON files. The format remains the original loop object (`name`, `bpm`, global meter and `bars`); no proprietary wrapper is added. Import creates new loop IDs and never overwrites existing loops. The UI reports partial progress if a server error interrupts a batch. Import limits are 16 MB per JSON file and 64 MB per batch after decompression. Export uses compact JSON; a ZIP contains one JSON file per loop, including loops hidden by the current search. Export of the open loop includes unsaved edits.
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for the single-directory hosting layout, permissions, safe updates and backups.
 
@@ -108,6 +117,8 @@ Vite proxies `/api` to PHP. Configure `beats-auth.php` and `beats-config.php` in
 npm test
 npm run build
 npm run test:api
+ # Optional: requires an isolated local MySQL/MariaDB test server.
+npm run test:mysql
 ```
 
 Set `PHP_BIN` to the PHP executable if it is not on `PATH`. API tests start a temporary server on port 18081 with test-only credentials. They do not change real accounts or stored loops. Tests cover mixed-meter timing, legacy data, localization, authentication, direct-file protection and CRUD operations for all instruments.

@@ -1,8 +1,8 @@
 DirectoryIndex index.php
 Options -Indexes
-<Files "beats-auth.php">
+<FilesMatch "^beats-(auth|config|services)\.php$">
     Require all denied
-</Files>
+</FilesMatch>
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{HTTP:Authorization} .

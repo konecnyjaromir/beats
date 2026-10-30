@@ -2,13 +2,16 @@
 declare(strict_types=1);
 require_once __DIR__ . "/bootstrap.php";
 require_once __DIR__ . "/google.php";
+$stage = "CONFIG";
 try {
     if (!mysql_mode()) {
         respond(["mode" => "basic"]);
     }
+    $stage = "SESSION";
     app_session();
     $method = $_SERVER["REQUEST_METHOD"];
     if ($method === "GET") {
+        $stage = isset($_SESSION["user_id"]) ? "DATABASE" : "SESSION";
         $user = session_user();
         respond([
             "user" => $user
@@ -63,7 +66,18 @@ try {
     ) {
         throw new RuntimeException("Missing Google client ID");
     }
+    $stage = "PHP_CURL";
+    if (!function_exists("curl_init")) {
+        throw new RuntimeException("Required extension unavailable");
+    }
+    $stage = "GOOGLE_CERTIFICATES";
     $keys = google_keys();
+    $stage = "PHP_OPENSSL";
+    if (!function_exists("openssl_verify")) {
+        throw new RuntimeException("Required extension unavailable");
+    }
+    $stage = "GOOGLE_LIBRARY";
+    google_autoload();
     try {
         // Refresh only for a rotated key ID, not for every invalid signature.
         $parts = explode(".", $token);
@@ -100,9 +114,21 @@ try {
     ) {
         fail("Tento účet nemá povolený přístup.", 403);
     }
+    $stage = "PHP_MBSTRING";
+    if (!function_exists("mb_substr")) {
+        throw new RuntimeException("Required extension unavailable");
+    }
     $name = is_string($claims["name"] ?? null)
         ? mb_substr($claims["name"], 0, 200)
         : $claims["email"];
+    $stage = "PHP_PDO_MYSQL";
+    if (
+        !class_exists("PDO") ||
+        !in_array("mysql", PDO::getAvailableDrivers(), true)
+    ) {
+        throw new RuntimeException("Required extension unavailable");
+    }
+    $stage = "DATABASE";
     $query = db()->prepare(
         "INSERT INTO " .
             db_table("users") .
@@ -114,6 +140,7 @@ try {
     );
     $query->execute([$claims["sub"]]);
     $id = $query->fetchColumn();
+    $stage = "SESSION";
     session_regenerate_id(true);
     $_SESSION = [
         "user_id" => (int) $id,
@@ -126,9 +153,25 @@ try {
         "csrf" => $_SESSION["csrf"],
     ]);
 } catch (Throwable $e) {
-    error_log("BEATS authentication failed: " . get_class($e));
+    // Never expose exception messages: PDO messages can contain account details.
+    $reference = "AUTH_" . $stage;
+    if (
+        $e instanceof PDOException &&
+        isset($e->errorInfo[1]) &&
+        is_numeric($e->errorInfo[1])
+    ) {
+        $reference .= "_" . (int) $e->errorInfo[1];
+    }
+    error_log(
+        "BEATS authentication failed: " .
+            $reference .
+            " (" .
+            get_class($e) .
+            ")",
+    );
     fail(
         "Přihlášení není dostupné. Zkontrolujte konfiguraci služeb a databázi.",
         503,
+        $reference,
     );
 }

@@ -75,6 +75,19 @@ The archive includes `index.php`, `api/`, `assets/`, `samples/` and `beats-confi
 
 Existing loops remain compatible. Legacy global time signatures are applied to their bars when read; a read does not rewrite the stored file. Local rebuilds preserve existing `dist/private/*.json.php` files, but avoid rebuilding while the local server is actively saving loops.
 
+## Sign-in troubleshooting
+
+Server failures display a safe diagnostic reference, also recorded in the PHP error log. No database credentials, token contents or exception messages are returned to the browser.
+
+- `AUTH_GOOGLE_CERTIFICATES`: check outbound HTTPS to `www.googleapis.com`, PHP's CA certificate configuration and access to `private/`.
+- `AUTH_PHP_CURL`, `AUTH_PHP_OPENSSL`, `AUTH_PHP_MBSTRING`, `AUTH_PHP_PDO_MYSQL`: enable the named PHP extension for the website's PHP version.
+- `AUTH_GOOGLE_LIBRARY`: upload the packaged `vendor/` directory and use PHP 8.2 or newer.
+- `AUTH_DATABASE_1045`: check database credentials and host access permissions. `AUTH_DATABASE_1049`: check the database name. `AUTH_DATABASE_2002`: check the database host, port and connectivity. `AUTH_DATABASE_1142`: check table privileges, including initial `CREATE`. Other `AUTH_DATABASE` codes identify a database/configuration failure; consult the hosting provider using that numeric code.
+- `AUTH_SESSION`: check PHP session storage and cookie configuration.
+- `AUTH_CONFIG`: check the guarded service configuration file.
+
+The application stores the Google account ID, email and display name. It does not store or display the profile picture, although Google's standard profile consent can include it.
+
 ## Language
 
 Edit `beats/beats-config.php` and reload the page:

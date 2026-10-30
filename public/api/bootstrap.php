@@ -26,15 +26,17 @@ function app_language(): string
     $config = is_file($path) ? require $path : [];
     return $language = ($config["language"] ?? "en") === "cs" ? "cs" : "en";
 }
-function fail(string $text, int $code = 400): never
+function fail(string $text, int $code = 400, ?string $reference = null): never
 {
     $messages = require __DIR__ . "/messages.php";
     respond(
         [
             "error" =>
-                app_language() === "cs"
+                (app_language() === "cs"
                     ? $text
-                    : $messages[$text] ?? "The request could not be completed.",
+                    : $messages[$text] ??
+                        "The request could not be completed.") .
+                ($reference === null ? "" : " [" . $reference . "]"),
         ],
         $code,
     );

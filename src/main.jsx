@@ -403,6 +403,9 @@ function App() {
                 </div>
               </div>
               <div className="save-actions">
+              <button type="button" onClick={() => guard(home)}>
+                {t("Zavřít")}
+              </button>
                 <FullscreenButton onError={setMessage} />
                 {savedId && (
                   <button disabled={loading} onClick={() => save(true)}>

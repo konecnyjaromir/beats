@@ -1,5 +1,5 @@
 import { t } from "./i18n.js";
-import { instruments, timelineFor, positionAt, eventsForBar } from "./model";
+import { instruments, timelineFor, positionAt, eventsForBar } from "./model.js";
 export class DrumEngine {
   buffers = new Map();
   sources = new Set();
@@ -53,7 +53,9 @@ export class DrumEngine {
     this.active = true;
     this.project = structuredClone(project);
     this.timeline = timelineFor(project);
-    this.startTime = this.ctx.currentTime + 0.08;
+    // Give the audio output time to wake up after resume (especially on iPad).
+    // Shift the entire timeline so the first hit and playhead remain aligned.
+    this.startTime = this.ctx.currentTime + 0.3;
     this.nextBar = 0;
     this.nextTime = this.startTime;
     this.queue = [];

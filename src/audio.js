@@ -7,10 +7,15 @@ export class DrumEngine {
   volume = 0.75;
   async prepare() {
     this.ctx ??= new (window.AudioContext || window.webkitAudioContext)();
-    this.master ??= this.ctx.createGain();
+    if (!this.master) {
+      this.master = this.ctx.createGain();
+      this.master.connect(this.ctx.destination);
+    }
     this.master.gain.value = this.volume;
-    this.master.connect(this.ctx.destination);
-    await this.ctx.resume();
+    const resumed = this.ctx.resume();
+    // Start a real (silent) source while still inside the user's gesture.
+    const outputReady = this.primeOutput();
+    await resumed;
     if (!this.loading)
       this.loading = Promise.all(
         instruments.flatMap((i) =>
@@ -29,7 +34,26 @@ export class DrumEngine {
         this.loading = null;
         throw e;
       });
-    await this.loading;
+    await Promise.all([this.loading, outputReady]);
+  }
+  primeOutput() {
+    const source = this.ctx.createBufferSource();
+    source.buffer = this.ctx.createBuffer(
+      1,
+      Math.ceil(this.ctx.sampleRate * 0.06),
+      this.ctx.sampleRate,
+    );
+    source.connect(this.master);
+    this.sources.add(source);
+    // Completion is driven by the audio renderer, not by a wall-clock timeout.
+    return new Promise((resolve) => {
+      source.onended = () => {
+        this.sources.delete(source);
+        source.disconnect();
+        resolve();
+      };
+      source.start();
+    });
   }
   hit(instrument, level, time = this.ctx.currentTime) {
     const source = this.ctx.createBufferSource();
@@ -53,16 +77,17 @@ export class DrumEngine {
     this.active = true;
     this.project = structuredClone(project);
     this.timeline = timelineFor(project);
-    // Give the audio output time to wake up after resume (especially on iPad).
     // Shift the entire timeline so the first hit and playhead remain aligned.
-    this.startTime = this.ctx.currentTime + 0.3;
+    // prepare() has already verified that the audio renderer is processing.
+    this.startTime = this.ctx.currentTime + 0.08;
     this.nextBar = 0;
     this.nextTime = this.startTime;
     this.queue = [];
-    const schedule = () => {
+    const schedule = (initial = false) => {
       if (!this.active) return;
       const now = this.ctx.currentTime;
-      while (this.nextTime < now + 0.15) {
+      const horizon = (initial ? this.startTime : now) + 0.15;
+      while (this.nextTime < horizon) {
         const index = this.nextBar % project.bars.length;
         const at = this.nextTime;
         const duration = this.timeline.bars[index].duration;
@@ -76,7 +101,7 @@ export class DrumEngine {
         this.nextTime += duration;
       }
       this.queue = this.queue.filter((e) => {
-        if (e.time < now + 0.15) {
+        if (e.time < horizon) {
           if (e.time >= now - 0.02)
             this.hit(e.instrument, e.level, Math.max(now, e.time));
           return false;
@@ -84,7 +109,8 @@ export class DrumEngine {
         return true;
       });
     };
-    schedule();
+    // Queue the first hit now; do not rely on a timer firing during startup.
+    schedule(true);
     this.timer = setInterval(schedule, 25);
     const draw = () => {
       if (!this.active) return;

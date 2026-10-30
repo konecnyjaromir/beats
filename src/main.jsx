@@ -454,7 +454,6 @@ function App() {
                     value={project.bpm}
                     onCommit={(bpm) => edit({ bpm })}
                   />
-                  <span>BPM</span>
                 </div>
               </div>
               <div className="control">

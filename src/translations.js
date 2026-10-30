@@ -1,7 +1,8 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
-  "kopie": "copy",
-  "Zavřít": "Close",
+  "Tempo v BPM": "Tempo in BPM",
+  kopie: "copy",
+  Zavřít: "Close",
   "Začni novou smyčkou": "Start with a new loop",
   "Vytvoř novou smyčku, nebo si níže otevři některou z uložených. Žádná smyčka teď není otevřená.":
     "Create a new loop or open one of your saved loops below. No loop is currently open.",

@@ -19,9 +19,17 @@ The original notice is included verbatim as a PDF. The selected collection here 
 
 Distribution source: https://github.com/backmeupplz/drumkit-kits/tree/04c2ad754456ce48c75b01e8a508ed73a2ec082c/avl-black-pearl
 
-The WAV bytes are unchanged from that pinned distribution source. We selected velocity layers 1, 3 and 5 for note numbers 36, 37, 38, 39, 40, 41, 42, 44, 45, 46, 48, 49, 51, 53, 54, 55, 56 and 61. Runtime playback applies additional gain to soft and medium hits; this does not modify the distributed WAV files. We do not claim the intermediary's WAV representation is byte-identical to the author's original SFZ/SF2 distribution.
+48 WAV files are unchanged from the pinned distribution above. The six WAV files for notes 47 and 64 were decoded losslessly from the following AVL FLAC source:
 
-[manifest.json](manifest.json) records the source commit, source paths and SHA-256 hashes of all included WAV files. Every file was checked against its Git blob in the pinned source repository.
+https://github.com/studiorack/avl-drumkits/tree/b06cb2c27359cbc68a830a82bddced05bd73d1a0
+
+The source files are Samples/47-Pearl13Tom2-{1,3,5}.flac and Samples/64-Maraca-{1,3,5}.flac. Their decoded PCM16 samples and sample rates were checked against the resulting WAV files and are identical. No gain, pitch or sample edits were applied.
+
+We select velocity layers 1, 3 and 5 for note numbers 36, 37, 38, 39, 40, 41, 42, 44, 45, 46, 47, 49, 51, 53, 54, 55, 56 and 64. Runtime playback applies additional gain to soft and medium hits.
+
+AVL uses a non-General-MIDI map. High tom uses the 12-inch Pearl tom (45), middle tom the 13-inch Pearl tom from the 5-piece kit (47), and low tom the floor tom (41). Note 48 is a swish hi-hat, not a tom; note 61 is a roto tom, not maracas. Maracas use 64. The pinned Black_Pearl_5pc.sfz definition identifies these source recordings.
+
+[manifest.json](manifest.json) records SHA-256 hashes, source paths and pinned source versions. Unchanged WAV files were checked against their original Git blobs; the newly decoded files also record their source FLAC hashes and conversion details.
 
 The upstream repository's MIT notice is preserved separately in [UPSTREAM-REPOSITORY-LICENSE.txt](UPSTREAM-REPOSITORY-LICENSE.txt). **It does not apply to these WAV recordings.** Their CC BY-SA 3.0 license and the author's notice continue to apply.
 

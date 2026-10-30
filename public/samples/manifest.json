@@ -4,7 +4,7 @@
   "license": "CC-BY-SA-3.0 with the AVL Drumkits exception",
   "sourceRepository": "https://github.com/backmeupplz/drumkit-kits",
   "sourceCommit": "04c2ad754456ce48c75b01e8a508ed73a2ec082c",
-  "changes": "Selection of 54 WAV files; no WAV bytes modified from the distribution source. Playback gain changes are runtime-only.",
+  "changes": "48 WAV files unchanged from the original pinned distribution; 6 WAV files decoded losslessly from pinned AVL FLAC recordings. No gain or pitch changes applied to distributed audio.",
   "files": [
     {
       "file": "36_v1.wav",
@@ -157,21 +157,6 @@
       "sha256": "84ee10a52ad8e09650972ebb952e24ae324b6af18e452a28a030664313165ecd"
     },
     {
-      "file": "48_v1.wav",
-      "sourcePath": "avl-black-pearl/48_v1.wav",
-      "sha256": "92b0098fd561f19d318bd2d6e47d417a05b65668068ce3a119b869de68ad6de4"
-    },
-    {
-      "file": "48_v3.wav",
-      "sourcePath": "avl-black-pearl/48_v3.wav",
-      "sha256": "ff9dfba9f8104168e009275b2e909b4b72af7089f4164d2385648cd6f001efab"
-    },
-    {
-      "file": "48_v5.wav",
-      "sourcePath": "avl-black-pearl/48_v5.wav",
-      "sha256": "13663a5d9cc932c48e4424967023b80f5c65ef5a6023c3dfdc8976b372eb2620"
-    },
-    {
       "file": "49_v1.wav",
       "sourcePath": "avl-black-pearl/49_v1.wav",
       "sha256": "bef3a4d1ce5c7def3481a6edf5beff81002d0e0323a493e3bed91fb274a33ccc"
@@ -262,19 +247,59 @@
       "sha256": "ab9a6a0df01b6708258e066bdb112b62bfbe5d592f7b1602eea5fd58060cb5fe"
     },
     {
-      "file": "61_v1.wav",
-      "sourcePath": "avl-black-pearl/61_v1.wav",
-      "sha256": "5dfa0fdeeabb921110a873257f20ff3831bc19dbe97943fbfbbe1dd79abc2af9"
+      "file": "47_v1.wav",
+      "sourceRepository": "https://github.com/studiorack/avl-drumkits",
+      "sourceCommit": "b06cb2c27359cbc68a830a82bddced05bd73d1a0",
+      "sourcePath": "Samples/47-Pearl13Tom2-1.flac",
+      "sourceSha256": "1531d18869a0746491efd3a143aefe129d899b42870e9713e7de52d05213ba7d",
+      "sha256": "272e756eb25594071454bb9784a376786de4e9b250479e537e3003f0dee9d30f",
+      "conversion": "Lossless FLAC to PCM16 WAV; decoded samples and rate verified identical."
     },
     {
-      "file": "61_v3.wav",
-      "sourcePath": "avl-black-pearl/61_v3.wav",
-      "sha256": "e9c5a549e93e579305d7c8f2cc28c5790d13f1de973ba9e45f6bfdf58df8aece"
+      "file": "47_v3.wav",
+      "sourceRepository": "https://github.com/studiorack/avl-drumkits",
+      "sourceCommit": "b06cb2c27359cbc68a830a82bddced05bd73d1a0",
+      "sourcePath": "Samples/47-Pearl13Tom2-3.flac",
+      "sourceSha256": "c78a054579c10fb0b3d0dfaf5de1efd7f7d2922b51015838c480f632255e6238",
+      "sha256": "45ff241a20bec00e83667ba1885dc1eb18aab38a057b95dfa39eb71ecb70aea1",
+      "conversion": "Lossless FLAC to PCM16 WAV; decoded samples and rate verified identical."
     },
     {
-      "file": "61_v5.wav",
-      "sourcePath": "avl-black-pearl/61_v5.wav",
-      "sha256": "bbe5b90943ed7734f2e3c3469dab7548dcfa2621fa03e1e83c86297329016509"
+      "file": "47_v5.wav",
+      "sourceRepository": "https://github.com/studiorack/avl-drumkits",
+      "sourceCommit": "b06cb2c27359cbc68a830a82bddced05bd73d1a0",
+      "sourcePath": "Samples/47-Pearl13Tom2-5.flac",
+      "sourceSha256": "aa8c7ab8374a98178676dc619a39840128f46b5744c40aa9c570109116b61812",
+      "sha256": "2405c59666affbace07e503055126b4deb04fddde13891802e55d8e72f844dc1",
+      "conversion": "Lossless FLAC to PCM16 WAV; decoded samples and rate verified identical."
+    },
+    {
+      "file": "64_v1.wav",
+      "sourceRepository": "https://github.com/studiorack/avl-drumkits",
+      "sourceCommit": "b06cb2c27359cbc68a830a82bddced05bd73d1a0",
+      "sourcePath": "Samples/64-Maraca-1.flac",
+      "sourceSha256": "ad95b9c6613433f1c48946453a7f3a9024b1f3eff291ac35131e3e7da08724b9",
+      "sha256": "100f969f32028f23a0699fb6764705610b0369f5111b6cdf87eefa78db0c1b11",
+      "conversion": "Lossless FLAC to PCM16 WAV; decoded samples and rate verified identical."
+    },
+    {
+      "file": "64_v3.wav",
+      "sourceRepository": "https://github.com/studiorack/avl-drumkits",
+      "sourceCommit": "b06cb2c27359cbc68a830a82bddced05bd73d1a0",
+      "sourcePath": "Samples/64-Maraca-3.flac",
+      "sourceSha256": "d71ae0c7d447e97672c26ebca97d5cc3739fca38a09542a0f01fd2e0f6ea58fe",
+      "sha256": "04d2402db47880b62f1ac9b7cedf74ecf27e7c8c0bbe2b91fb2d79028fc9bb48",
+      "conversion": "Lossless FLAC to PCM16 WAV; decoded samples and rate verified identical."
+    },
+    {
+      "file": "64_v5.wav",
+      "sourceRepository": "https://github.com/studiorack/avl-drumkits",
+      "sourceCommit": "b06cb2c27359cbc68a830a82bddced05bd73d1a0",
+      "sourcePath": "Samples/64-Maraca-5.flac",
+      "sourceSha256": "0b68d4d318cc21d2436484a1c0153badb37556349af2e6532fbbc172acb58c01",
+      "sha256": "9df96c1a7499c0671f191bfa893a491c0ef80986fa5ca2e8167a454cff20bb9f",
+      "conversion": "Lossless FLAC to PCM16 WAV; decoded samples and rate verified identical."
     }
-  ]
+  ],
+  "keymapSource": "https://github.com/studiorack/avl-drumkits/blob/b06cb2c27359cbc68a830a82bddced05bd73d1a0/Black_Pearl_5pc.sfz"
 }

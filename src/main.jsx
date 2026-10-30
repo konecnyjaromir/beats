@@ -10,6 +10,8 @@ import { HomeScreen } from "./HomeScreen";
 import { copyName } from "./copyName";
 import "./style.css";
 const engine = new DrumEngine();
+const removeAudioUnlock = engine.installEarlyUnlock();
+if (import.meta.hot) import.meta.hot.dispose(removeAudioUnlock);
 document.documentElement.lang = language;
 document.title = t("BEATS — bicí studio");
 async function api(method = "GET", body, id) {

@@ -5,6 +5,64 @@ export class DrumEngine {
   sources = new Set();
   active = false;
   volume = 0.75;
+  installEarlyUnlock(target = document) {
+    let preparing = false;
+    const unlock = () => {
+      if (
+        target.hidden ||
+        preparing ||
+        (this.keepAlive && this.ctx?.state === "running")
+      )
+        return;
+      preparing = true;
+      // Capture the gesture before opening a loop, rather than waiting for Play.
+      this.prepare()
+        .catch(() => {
+          this.releaseOutput();
+          // Playback retries and reports any actual loading error to the user.
+        })
+        .finally(() => {
+          preparing = false;
+        });
+    };
+    const visibility = () => {
+      if (target.hidden) this.releaseOutput();
+    };
+    for (const event of ["touchend", "click", "keydown"])
+      target.addEventListener(event, unlock, { capture: true });
+    target.addEventListener("visibilitychange", visibility);
+    return () => {
+      for (const event of ["touchend", "click", "keydown"])
+        target.removeEventListener(event, unlock, { capture: true });
+      target.removeEventListener("visibilitychange", visibility);
+      this.releaseOutput();
+    };
+  }
+  keepOutputOpen() {
+    if (this.keepAlive) return;
+    const source = this.ctx.createBufferSource();
+    source.buffer = this.ctx.createBuffer(
+      1,
+      this.ctx.sampleRate,
+      this.ctx.sampleRate,
+    );
+    // A zero-only stream may let USB DACs idle. Very low-level noise (-100 dBFS
+    // peak before master gain) keeps the stream nonzero without an audible cue.
+    const samples = source.buffer.getChannelData(0);
+    for (let i = 0; i < samples.length; i++)
+      samples[i] = (Math.random() * 2 - 1) * 0.00001;
+    source.loop = true;
+    source.connect(this.master);
+    source.start();
+    // Separate from musical sources: Stop must not put the output back to sleep.
+    this.keepAlive = source;
+  }
+  releaseOutput() {
+    if (!this.keepAlive) return;
+    this.keepAlive.stop();
+    this.keepAlive.disconnect();
+    this.keepAlive = null;
+  }
   async prepare() {
     this.ctx ??= new (window.AudioContext || window.webkitAudioContext)();
     if (!this.master) {
@@ -13,6 +71,7 @@ export class DrumEngine {
     }
     this.master.gain.value = this.volume;
     const resumed = this.ctx.resume();
+    this.keepOutputOpen();
     // Start a real (silent) source while still inside the user's gesture.
     const outputReady = this.primeOutput();
     await resumed;

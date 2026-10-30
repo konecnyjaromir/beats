@@ -1,5 +1,11 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "SPRÁVA ÚČTU": "ACCOUNT SETTINGS",
+  "Zpět do studia": "Back to studio",
+  "Smazáním účtu trvale odstraníš svůj profil v BEATS a všechny uložené smyčky. Tuto akci nelze vrátit. Tvůj Google účet zůstane zachovaný.":
+    "Deleting your account permanently removes your BEATS profile and all saved loops. This cannot be undone. Your Google account will remain unchanged.",
+  "Než budeš pokračovat, můžeš si stáhnout smyčky jako ZIP. Po kliknutí na Smazat účet ještě požádáme o závěrečné potvrzení.":
+    "Before continuing, you can download your loops as a ZIP. Clicking Delete account will ask for one final confirmation.",
   "Smyčka nebyla nalezena.": "Loop not found.",
   "Vyzkoušej studio bez účtu. Pro vlastní uloženou knihovnu se přihlas přes Google.":
     "Try the studio without an account. Sign in with Google to keep your own saved library.",

@@ -80,6 +80,50 @@ a {
   font-size: 12px;
   color: #b6bec4;
 }
+.account-menu-link {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  padding: 10px 0;
+  text-align: left;
+  border: 0;
+  border-top: 1px solid #33383e;
+  border-radius: 0;
+  background: transparent;
+  color: #a8afb7;
+  font-size: 12px;
+}
+.account-menu-link:hover {
+  color: #f0b0a3;
+}
+.account-delete-page {
+  max-width: 760px;
+  padding: clamp(22px, 4vw, 44px);
+  border: 1px solid #414348;
+  border-radius: 14px;
+  background: #1d2024;
+}
+.account-delete-page h1 {
+  font-size: 32px;
+  margin: 16px 0;
+}
+.account-delete-page p {
+  line-height: 1.75;
+  color: #c0c6ce;
+}
+.account-delete-page .account-email {
+  overflow-wrap: anywhere;
+  color: #fff;
+}
+.account-delete-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.account-delete-actions .danger {
+  color: #ffb5a8;
+  border-color: #8b5148;
+}
 .demo-banner {
   display: flex;
   align-items: center;

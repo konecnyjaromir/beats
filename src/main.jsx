@@ -46,6 +46,7 @@ async function serverApi(method = "GET", body, id) {
 }
 function App({ user, onLogout, demo }) {
   const api = demo?.request || serverApi;
+  const [accountPage, setAccountPage] = useState(false);
   const [project, setProject] = useState(() =>
       demo ? normalizeProject(demo.first) : null,
     ),
@@ -131,6 +132,7 @@ function App({ user, onLogout, demo }) {
     setPosition({ bar: 0, progress: 0 });
   }
   function home() {
+    setAccountPage(false);
     navigationRef.current++;
     stop();
     setProject(null);
@@ -141,6 +143,7 @@ function App({ user, onLogout, demo }) {
     window.scrollTo({ top: 0, behavior: "instant" });
   }
   function createLoop() {
+    setAccountPage(false);
     navigationRef.current++;
     stop();
     setProject({ ...initial(), name: t("Nová smyčka"), bars: [bar()] });
@@ -301,6 +304,7 @@ function App({ user, onLogout, demo }) {
     else action();
   }
   async function load(id) {
+    setAccountPage(false);
     const navigation = ++navigationRef.current;
     setLoading(true);
     stop();
@@ -472,6 +476,21 @@ function App({ user, onLogout, demo }) {
             {t("Tři dynamické vrstvy")}{" "}
           </p>
         </div>
+        {user && (
+          <button
+            className="account-menu-link"
+            disabled={loading || transferBusy}
+            onClick={() => {
+              stop();
+              setMessage("");
+              setAccountPage(true);
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }}
+            aria-current={accountPage ? "page" : undefined}
+          >
+            {t("Smazat účet")}
+          </button>
+        )}
       </aside>
       <main>
         {demo && (
@@ -522,36 +541,70 @@ function App({ user, onLogout, demo }) {
             >
               {t("Odhlásit se")}
             </button>
-            <button
-              className="danger"
-              disabled={transferBusy || loading}
-              onClick={() =>
-                setConfirm({
-                  title: t("Smazat účet"),
-                  label: t("Trvale smazat účet"),
-                  text: t(
-                    "Účet {0} a všechny jeho smyčky budou trvale smazány. Zmizí i neuložené změny. Tuto akci nelze vrátit. Před smazáním si můžeš exportovat knihovnu do ZIP. Opravdu pokračovat?",
-                    user.email,
-                  ),
-                  action: async () => {
-                    stop();
-                    setLoading(true);
-                    try {
-                      await onLogout(true);
-                    } catch (e) {
-                      setMessage(e.message);
-                    } finally {
-                      setLoading(false);
-                    }
-                  },
-                })
-              }
-            >
-              {t("Smazat účet")}
-            </button>
           </div>
         )}
-        {!project && (
+        {accountPage && user && (
+          <section
+            className="account-delete-page"
+            aria-labelledby="account-delete-title"
+          >
+            <div className="eyebrow">{t("SPRÁVA ÚČTU")}</div>
+            <h1 id="account-delete-title">{t("Smazat účet")}</h1>
+            <p className="account-email">{user.email}</p>
+            <p>
+              {t(
+                "Smazáním účtu trvale odstraníš svůj profil v BEATS a všechny uložené smyčky. Tuto akci nelze vrátit. Tvůj Google účet zůstane zachovaný.",
+              )}
+            </p>
+            <p>
+              {t(
+                "Než budeš pokračovat, můžeš si stáhnout smyčky jako ZIP. Po kliknutí na Smazat účet ještě požádáme o závěrečné potvrzení.",
+              )}
+            </p>
+            <div className="account-delete-actions">
+              <button
+                disabled={loading || transferBusy}
+                onClick={() => setAccountPage(false)}
+              >
+                {t("Zpět do studia")}
+              </button>
+              <button
+                disabled={loading || transferBusy || !library.length}
+                onClick={exportAll}
+              >
+                {t("Export všeho do ZIP")}
+              </button>
+              <button
+                className="danger"
+                disabled={transferBusy || loading}
+                onClick={() =>
+                  setConfirm({
+                    title: t("Smazat účet"),
+                    label: t("Trvale smazat účet"),
+                    text: t(
+                      "Účet {0} a všechny jeho smyčky budou trvale smazány. Zmizí i neuložené změny. Tuto akci nelze vrátit. Před smazáním si můžeš exportovat knihovnu do ZIP. Opravdu pokračovat?",
+                      user.email,
+                    ),
+                    action: async () => {
+                      stop();
+                      setLoading(true);
+                      try {
+                        await onLogout(true);
+                      } catch (e) {
+                        setMessage(e.message);
+                      } finally {
+                        setLoading(false);
+                      }
+                    },
+                  })
+                }
+              >
+                {t("Smazat účet")}
+              </button>
+            </div>
+          </section>
+        )}
+        {!accountPage && !project && (
           <HomeScreen
             loops={filteredLibrary}
             total={library.length}
@@ -562,7 +615,7 @@ function App({ user, onLogout, demo }) {
             loading={loading || libraryLoading}
           />
         )}
-        {!project && message && (
+        {(accountPage || !project) && message && (
           <div className="notice" role="status">
             {message}
             <button
@@ -573,7 +626,7 @@ function App({ user, onLogout, demo }) {
             </button>
           </div>
         )}
-        {project && (
+        {!accountPage && project && (
           <>
             <header className="project-header">
               <div className="project-heading">

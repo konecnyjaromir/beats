@@ -1,5 +1,10 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Dělení řádku {0}: {1}. Změnit dělení":
+    "Divisions for row {0}: {1}. Change divisions",
+  "Počet stejných dílů celého taktu (1–64).":
+    "Number of equal divisions of the whole bar (1–64).",
+  "Použít dělení": "Apply divisions",
   "Tempo v BPM": "Tempo in BPM",
   kopie: "copy",
   Zavřít: "Close",

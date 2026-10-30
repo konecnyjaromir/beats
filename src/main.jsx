@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { initial, bar, row, uid, instruments, normalizeProject } from "./model";
 import { DrumEngine } from "./audio";
 import { TempoInput } from "./TempoInput";
+import { DivisionPicker } from "./DivisionPicker";
 import { FullscreenButton } from "./FullscreenButton";
 import { HomeScreen } from "./HomeScreen";
 import { copyName } from "./copyName";
@@ -675,18 +676,10 @@ function App() {
                           ))}
                         </select>
                       </div>
-                      <input
-                        className="division"
-                        aria-label={t("Dělení řádku {0}", ri + 1)}
-                        type="number"
-                        min="1"
-                        max="64"
+                      <DivisionPicker
+                        row={ri + 1}
                         value={r.steps.length}
-                        onChange={(e) => {
-                          const n = Math.max(
-                            1,
-                            Math.min(64, +e.target.value || 1),
-                          );
+                        onCommit={(n) => {
                           editRow(r.id, (x) => ({
                             ...x,
                             steps: Array.from(

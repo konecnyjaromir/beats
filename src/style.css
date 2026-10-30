@@ -677,6 +677,60 @@ header {
   background: #25292f;
   padding: 8px 1px;
 }
+.division span {
+  margin-left: 4px;
+  color: #c5ed82;
+}
+.division-dialog {
+  width: min(360px, calc(100vw - 32px));
+  padding: 24px;
+  color: #eeefed;
+  background: #202328;
+  border: 1px solid #454c54;
+  border-radius: 14px;
+  box-shadow: 0 20px 70px #0008;
+}
+.division-dialog::backdrop {
+  background: #0008;
+}
+.division-dialog h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.division-dialog p {
+  color: #aab2bb;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.division-value {
+  display: block;
+  margin: 20px 0 10px;
+  text-align: center;
+  color: #c5ed82;
+  font-size: 32px;
+  font-variant-numeric: tabular-nums;
+}
+.division-slider {
+  margin: 0;
+}
+.division-limits {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  color: #aab2bb;
+  font-size: 12px;
+}
+.division-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+.division-buttons button[type="submit"] {
+  background: #c5ed82;
+  color: #202a17;
+  border-color: #c5ed82;
+}
 .steps {
   display: grid;
   gap: 4px;

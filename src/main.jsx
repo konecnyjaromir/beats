@@ -1,3 +1,4 @@
+import { ExportDialog } from "./ExportDialog.jsx";
 import { t, language } from "./i18n.js";
 import React, { useState, useRef, useEffect } from "react";
 import { createRoot } from "react-dom/client";
@@ -9,13 +10,7 @@ import { WarmupToggle } from "./WarmupToggle";
 import { AuthGate } from "./AuthGate";
 import { LoopName } from "./LoopName";
 import { limits, requestHeaders } from "./auth.js";
-import {
-  readLoopFiles,
-  loopJson,
-  loopFilename,
-  zipLoops,
-  downloadFile,
-} from "./loopFiles.js";
+import { readLoopFiles, zipLoops, downloadFile } from "./loopFiles.js";
 import { FullscreenButton } from "./FullscreenButton";
 import { HomeScreen } from "./HomeScreen";
 import { copyName } from "./copyName";
@@ -52,6 +47,8 @@ function App({ user, onLogout, demo }) {
     ),
     [selected, setSelected] = useState(0),
     [playing, setPlaying] = useState(false),
+    [repeat, setRepeat] = useState(true),
+    [playingBar, setPlayingBar] = useState(false),
     [loading, setLoading] = useState(false),
     [position, setPosition] = useState({ bar: 0, progress: 0 }),
     [library, setLibrary] = useState([]),
@@ -223,7 +220,7 @@ function App({ user, onLogout, demo }) {
       setTransferBusy(false);
     }
   }
-  async function play() {
+  async function play(onlyBar = false) {
     if (!project) return;
     const navigation = navigationRef.current;
     if (playing) {
@@ -236,13 +233,22 @@ function App({ user, onLogout, demo }) {
       await engine.prepare();
       if (navigation !== navigationRef.current) return;
       engine.start(
-        project,
+        onlyBar ? { ...project, bars: [project.bars[selected]] } : project,
         (nextPosition) => {
-          setPosition(nextPosition);
-          setSelected(nextPosition.bar);
+          const bar = onlyBar ? selected : nextPosition.bar;
+          setPosition({ ...nextPosition, bar });
+          setSelected(bar);
         },
-        { warmup: adapterWarmup },
+        {
+          warmup: adapterWarmup,
+          repeat: !onlyBar && repeat,
+          onEnded: () => {
+            setPlaying(false);
+            setPosition({ bar: onlyBar ? selected : 0, progress: 0 });
+          },
+        },
       );
+      setPlayingBar(onlyBar);
       setPlaying(true);
     } catch (e) {
       setMessage(e.message);
@@ -652,17 +658,7 @@ function App({ user, onLogout, demo }) {
                   {t("Zavřít")}
                 </button>
                 <FullscreenButton onError={setMessage} />
-                <button
-                  onClick={() =>
-                    downloadFile(
-                      loopJson(project),
-                      loopFilename(project.name),
-                      "application/json",
-                    )
-                  }
-                >
-                  {t("Export JSON")}
-                </button>
+                <ExportDialog project={project} />
                 {savedId && (
                   <button disabled={loading} onClick={() => save(true)}>
                     {" "}
@@ -684,11 +680,31 @@ function App({ user, onLogout, demo }) {
                 <button
                   className={"play " + (playing ? "active" : "")}
                   disabled={loading}
-                  onClick={play}
+                  onClick={() => play()}
                 >
                   {loading ? "…" : playing ? "■" : "▶"}{" "}
                   <span>{playing ? t("Zastavit") : t("Přehrát")}</span>
                 </button>
+                <button
+                  type="button"
+                  disabled={loading || playing}
+                  onClick={() => play(true)}
+                >
+                  ▶ {t("Přehrát takt")}
+                </button>
+                <label className="repeat-toggle">
+                  <input
+                    type="checkbox"
+                    role="switch"
+                    checked={repeat}
+                    disabled={loading || (playing && playingBar)}
+                    onChange={(e) => {
+                      setRepeat(e.target.checked);
+                      engine.setRepeating(e.target.checked);
+                    }}
+                  />
+                  <span>{t("Opakovat smyčku")}</span>
+                </label>
                 <WarmupToggle
                   checked={adapterWarmup}
                   disabled={playing || loading}
@@ -746,7 +762,11 @@ function App({ user, onLogout, demo }) {
                 ↻{" "}
                 <span>
                   {" "}
-                  {t("CELÁ SMYČKA")}{" "}
+                  {playing && playingBar
+                    ? t("JEDEN TAKT")
+                    : repeat
+                      ? t("CELÁ SMYČKA")
+                      : t("JEDEN PRŮCHOD")}{" "}
                   <small>
                     {playing
                       ? t("Hraje takt {0}", position.bar + 1)

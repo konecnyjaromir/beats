@@ -1,5 +1,29 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Přehrát takt": "Play bar",
+  "Opakovat smyčku": "Repeat loop",
+  "JEDEN TAKT": "SINGLE BAR",
+  "JEDEN PRŮCHOD": "PLAY ONCE",
+  Export: "Export",
+  "Export smyčky": "Export loop",
+  "Formát souboru": "File format",
+  "Původní formát pro zálohu a opětovný import do BEATS.":
+    "Original format for backups and re-importing into BEATS.",
+  "Pro hudební programy. General MIDI bicí, tempo a síla úderů.":
+    "For music software. General MIDI drums, tempo and hit velocities.",
+  "Bubenické noty. Každý nástroj má vlastní linku včetně triol a dalších dělení.":
+    "Percussion notation. Each instrument has its own staff, including triplets and other subdivisions.",
+  "MIDI a PDF vynechávají ztlumené řádky. JSON uchová vše. MIDI neobsahuje zvukové samply.":
+    "MIDI and PDF omit muted rows. JSON preserves everything. MIDI does not contain audio samples.",
+  "Připravuji export…": "Preparing export…",
+  Stáhnout: "Download",
+  "Export se nepodařil. Zkus to znovu.": "Export failed. Please try again.",
+  "Nepodařilo se načíst písmo pro PDF.": "Could not load the PDF font.",
+  "Čtvrťová nota": "Quarter note",
+  "( ) slabý úder · > silný úder · ztlumené řádky vynechány":
+    "( ) soft hit · > accented hit · muted rows omitted",
+  Ticho: "Silence",
+  pokračování: "continued",
   "SPRÁVA ÚČTU": "ACCOUNT SETTINGS",
   "Zpět do studia": "Back to studio",
   "Smazáním účtu trvale odstraníš svůj profil v BEATS a všechny uložené smyčky. Tuto akci nelze vrátit. Tvůj Google účet zůstane zachovaný.":

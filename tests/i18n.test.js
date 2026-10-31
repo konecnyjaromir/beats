@@ -23,6 +23,8 @@ test("Localized messages preserve names and dynamic values", () => {
 test("Every static UI translation key has a nonempty English entry", () => {
   for (const file of [
     "main.jsx",
+    "ExportDialog.jsx",
+    "pdfExport.js",
     "model.js",
     "audio.js",
     "FullscreenButton.jsx",

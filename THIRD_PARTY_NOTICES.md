@@ -24,4 +24,8 @@ React, React DOM, Vite, Prettier and the PHP Prettier plugin retain their own li
 
 ## Font
 
-The UI optionally requests DM Sans from Google Fonts. No font binaries are redistributed in this repository; the browser falls back to system fonts when the external font is unavailable.
+The UI optionally requests DM Sans from Google Fonts. No DM Sans binaries are redistributed in this repository; the browser falls back to system fonts when the external font is unavailable.
+
+## PDF export
+
+PDF export uses VexFlow (MIT), jsPDF (MIT) and svg2pdf.js (MIT). Their license notices are bundled in `public/licenses/`. The locally hosted Noto Sans Regular font comes from [notofonts/noto-fonts](https://github.com/notofonts/noto-fonts) under the SIL Open Font License 1.1; its full notice is bundled as `public/licenses/NotoSans-OFL.txt`. Font embedding and redistribution are permitted under that license. These components do not change the sample licenses above.

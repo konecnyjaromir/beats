@@ -1,0 +1,87 @@
+.export-dialog {
+  width: min(520px, calc(100vw - 40px));
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+}
+.export-dialog fieldset {
+  border: 0;
+  padding: 0;
+  margin: 20px 0;
+  display: grid;
+  gap: 10px;
+}
+.export-dialog legend {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid #41464b;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.export-option:has(input:checked) {
+  border-color: #c7ed86;
+  background: #c7ed860c;
+}
+.export-option input {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  accent-color: #c7ed86;
+}
+.export-option strong,
+.export-option small {
+  display: block;
+}
+.export-option small {
+  margin-top: 5px;
+  line-height: 1.5;
+  color: #aeb9c3;
+}
+.export-dialog .export-note {
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.repeat-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.repeat-toggle input {
+  appearance: none;
+  width: 34px;
+  height: 20px;
+  border-radius: 20px;
+  background: #474d52;
+  position: relative;
+  margin: 0;
+  cursor: pointer;
+}
+.repeat-toggle input::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+.repeat-toggle input:checked {
+  background: #92b450;
+}
+.repeat-toggle input:checked::before {
+  transform: translateX(14px);
+}
+.repeat-toggle input:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

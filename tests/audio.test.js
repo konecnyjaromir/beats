@@ -175,6 +175,45 @@ test("Playback schedules the first hit immediately, with gapless repeats and can
     true,
     "Stop cancels a hit scheduled after warm-up",
   );
+  engine.stop();
+  let ended = 0;
+  engine.ctx.currentTime = 20;
+  engine.start(project, () => {}, { repeat: false, onEnded: () => ended++ });
+  const firstPass = sources.length;
+  engine.ctx.currentTime = 22;
+  schedule();
+  assert.equal(
+    sources.length,
+    firstPass,
+    "One-shot playback never queues the next cycle",
+  );
+  engine.ctx.currentTime = 22.09;
+  schedule();
+  assert.equal(ended, 1);
+  assert.equal(engine.active, false);
+  assert.equal(
+    sources.at(-1).stopped,
+    undefined,
+    "Natural completion preserves the final sample tail",
+  );
+  schedule();
+  assert.equal(ended, 1);
+  engine.ctx.currentTime = 30;
+  engine.start(project, () => {}, { onEnded: () => ended++ });
+  engine.ctx.currentTime = 32;
+  schedule();
+  const future = sources.at(-1);
+  assert.equal(future.startedAt, 32.08);
+  engine.setRepeating(false);
+  assert.equal(
+    future.stopped,
+    true,
+    "Disabling repeat cancels already queued hits from the next cycle",
+  );
+  engine.ctx.currentTime = 32.1;
+  schedule();
+  assert.equal(ended, 2);
+
 });
 
 test("Preparation starts silent audio in the gesture and waits for rendering, not merely resume", async () => {

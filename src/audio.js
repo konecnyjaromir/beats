@@ -129,9 +129,14 @@ export class DrumEngine {
       source.disconnect();
       dynamics.disconnect();
     };
+    source.beatsTime = time;
     source.start(time);
   }
-  start(project, onPosition, { warmup = false } = {}) {
+  start(
+    project,
+    onPosition,
+    { warmup = false, repeat = true, onEnded = () => {} } = {},
+  ) {
     this.stop();
     this.active = true;
     this.project = structuredClone(project);
@@ -141,14 +146,26 @@ export class DrumEngine {
     const now = this.ctx.currentTime;
     if (warmup) this.hit("rim", 1, now + 0.01);
     this.startTime = now + (warmup ? 0.5 : 0.08);
+    this.endTime = repeat ? Infinity : this.startTime + this.timeline.total;
     this.nextBar = 0;
     this.nextTime = this.startTime;
     this.queue = [];
     const schedule = (initial = false) => {
       if (!this.active) return;
       const now = this.ctx.currentTime;
+      if (now >= this.endTime) {
+        this.active = false;
+        clearInterval(this.timer);
+        cancelAnimationFrame(this.frame);
+        // Let the final drum/cymbal decay naturally after the last bar.
+        onEnded();
+        return;
+      }
       const horizon = (initial ? this.startTime : now) + 0.15;
-      while (this.nextTime < horizon) {
+      while (
+        this.nextTime < horizon &&
+        this.nextTime < this.endTime - 0.000001
+      ) {
         const index = this.nextBar % project.bars.length;
         const at = this.nextTime;
         const duration = this.timeline.bars[index].duration;
@@ -185,6 +202,29 @@ export class DrumEngine {
     this.volume = value;
     if (this.master)
       this.master.gain.setTargetAtTime(value, this.ctx.currentTime, 0.02);
+  }
+  setRepeating(repeat) {
+    if (!this.active) return;
+    if (repeat) {
+      this.endTime = Infinity;
+      return;
+    }
+    const cycle =
+      Math.floor(
+        Math.max(0, this.ctx.currentTime - this.startTime) /
+          this.timeline.total,
+      ) + 1;
+    this.endTime = this.startTime + cycle * this.timeline.total;
+    this.queue = this.queue.filter(
+      (event) => event.time < this.endTime - 0.000001,
+    );
+    this.nextBar = Math.min(this.nextBar, cycle * this.project.bars.length);
+    this.nextTime = Math.min(this.nextTime, this.endTime);
+    for (const source of this.sources)
+      if (source.beatsTime >= this.endTime - 0.000001) {
+        source.stop();
+        this.sources.delete(source);
+      }
   }
   stop() {
     this.active = false;

@@ -12,7 +12,7 @@ A browser-based drum sequencer built with React, Web Audio and PHP. Create acous
 - Loop playback with a moving playhead and automatic navigation to the active bar.
 - Searchable loop library, collapsible sidebar, fullscreen mode and responsive layout.
 - Two configurable backends: JSON files with shared Basic Auth access, or MySQL with Google sign-in and private per-user libraries.
-- JSON export of the open loop, ZIP export of the entire library, and batch JSON/ZIP import.
+- JSON, MIDI and percussion-score PDF export of the open loop, ZIP export of the entire library, and batch JSON/ZIP import.
 - No-registration demo in Google mode: six editable examples, opening with simultaneous straight eighth notes and triplets. Demo edits stay in page memory and can be exported.
 - Six starter rhythms for new Google accounts, including a twelve-bar blues shuffle with a final fill; confirmed account deletion removes the private library.
 - Configurable limits (default: 1,000 loops per account and 1,000 bars per loop) and English/Czech localization.
@@ -94,6 +94,16 @@ Save updates the selected saved loop; Save a copy creates another one. The libra
 For MySQL + Google sign-in, follow [the database setup guide](DEPLOYMENT.md#mysql-and-google-sign-in). Set `mode` to `mysql` in `beats-services.php`; omit that file or use `json` to keep the original shared file library. The table prefix, allowed Google emails, and limits are configurable. These modes do not automatically merge or transfer user data.
 
 The import button accepts multiple JSON files or a ZIP containing JSON files. The format remains the original loop object (`name`, `bpm`, global meter and `bars`); no proprietary wrapper is added. Import creates new loop IDs and never overwrites existing loops. The UI reports partial progress if a server error interrupts a batch. Import limits are 16 MB per JSON file and 64 MB per batch after decompression. Export uses compact JSON; a ZIP contains one JSON file per loop, including loops hidden by the current search. Export of the open loop includes unsaved edits.
+
+The editor's **Export** button opens a format dialog, also available in demo mode:
+
+- **JSON** preserves the original editable format, including muted rows.
+- **MIDI** creates a type-1 Standard MIDI File with General MIDI percussion on channel 10, tempo, meter changes and three velocity levels (40, 85, 120). Muted rows are omitted. Timing uses 960 ticks per quarter note; uncommon subdivisions are rounded to the nearest tick. MIDI contains notes, not the bundled audio samples, so sound depends on the receiving instrument.
+- **PDF** creates a landscape percussion score with a separate named staff for each active instrument row. Independent subdivisions use tuplets, soft hits use parentheses and strong hits use accents. Note/rest lengths represent grid slots. Large scores continue over multiple pages; dense bars are scaled to fit. Muted rows are omitted. This is a separated percussion score rather than a condensed drum-kit transcription. PDF libraries are loaded only when selected; generation stays in the browser.
+
+Import remains JSON/ZIP only. Keep JSON when you need an editable backup.
+
+**Repeat loop** is on by default. Turning it off during playback finishes the current loop pass without starting another; it can also be turned back on before playback ends. **Play bar** plays the currently selected bar once, independent of the repeat setting. Natural completion lets the final sample decay; the Stop button cancels playback immediately.
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for the single-directory hosting layout, permissions, safe updates and backups.
 

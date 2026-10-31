@@ -19,6 +19,7 @@ for (const name of [
   "api",
   "assets",
   "images",
+  "fonts",
   "samples",
   "licenses",
   "vendor",

@@ -1,6 +1,6 @@
 import React, { useId, useRef, useState } from "react";
 import { t } from "./i18n.js";
-import { TransportIcon, ActionLabel } from "./TransportIcon.jsx";
+import { TransportIcon } from "./TransportIcon.jsx";
 
 export function TrainingDialog({ value, onChange, disabled }) {
   const dialog = useRef(null);
@@ -39,26 +39,10 @@ export function TrainingDialog({ value, onChange, disabled }) {
           onSubmit={() => onChange({ ...draft, enabled: true })}
         >
           <h3 id={titleId}>{t("Trénování")}</h3>
-          <p>
-            {t(
-              "Tempo se mění po přehrání celé smyčky. Na koncovém tempu hraje dál, dokud přehrávání nezastavíš.",
-            )}
-          </p>
           {fields.map(([key, label, min, max, unit]) => (
             <label className="training-field" key={key} title={label}>
               <span>
-                <ActionLabel
-                  icon={
-                    {
-                      start: "trainingStart",
-                      end: "trainingEnd",
-                      repeats: "repeat",
-                      step: "training",
-                    }[key]
-                  }
-                >
-                  {label}
-                </ActionLabel>
+                <span>{label}</span>
                 <output>
                   {draft[key]}
                   {unit}
@@ -96,7 +80,7 @@ export function TrainingDialog({ value, onChange, disabled }) {
                   dialog.current.close();
                 }}
               >
-                <ActionLabel icon="stop">{t("Vypnout")}</ActionLabel>
+                {t("Vypnout")}
               </button>
             )}
             <button
@@ -104,15 +88,13 @@ export function TrainingDialog({ value, onChange, disabled }) {
               title={t("Zrušit")}
               onClick={() => dialog.current.close()}
             >
-              <ActionLabel icon="close">{t("Zrušit")}</ActionLabel>
+              {t("Zrušit")}
             </button>
             <button
               type="submit"
               title={value.enabled ? t("Použít") : t("Zapnout trénování")}
             >
-              <ActionLabel icon={value.enabled ? "check" : "play"}>
-                {value.enabled ? t("Použít") : t("Zapnout")}
-              </ActionLabel>
+              {value.enabled ? t("Použít") : t("Zapnout")}
             </button>
           </div>
         </form>

@@ -1347,10 +1347,15 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 10px;
+  width: 32px;
+  height: 36px;
+  padding: 6px;
   flex-shrink: 0;
+}
+.compact .training-toggle {
+  width: 38px;
+  height: 44px;
+  padding: 8px;
 }
 .training-toggle[aria-pressed="true"] {
   background: #303c28;
@@ -1401,15 +1406,8 @@ footer {
   clip-path: inset(50%);
   overflow: hidden;
 }
-.compact .training-dialog p {
-  display: none;
-}
 .compact .training-buttons button {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.training-dialog .action-icon svg {
-  width: 22px;
-  height: 22px;
 }

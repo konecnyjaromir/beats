@@ -934,6 +934,22 @@ header {
   color: #aab2bb;
   font-size: 12px;
 }
+.division-presets {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 20px;
+}
+.division-presets button {
+  min-height: 44px;
+  padding: 8px 0;
+  font-variant-numeric: tabular-nums;
+}
+.division-presets button[aria-pressed="true"] {
+  background: #303c28;
+  color: #c5ed82;
+  border-color: #91b45f;
+}
 .division-buttons {
   display: flex;
   justify-content: flex-end;
@@ -1018,7 +1034,7 @@ header {
   color: #c5ed82;
   font-size: 11px;
 }
-.add-row span {
+.add-row > span:not(.action-icon):not(.action-label) {
   color: #707b87;
   margin-left: 18px;
   font-size: 10px;
@@ -1307,7 +1323,7 @@ footer {
   .add-row {
     margin-left: 15px;
   }
-  .add-row span {
+  .add-row > span:not(.action-icon):not(.action-label) {
     display: none;
   }
   footer {

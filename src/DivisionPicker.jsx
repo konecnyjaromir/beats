@@ -50,6 +50,18 @@ export function DivisionPicker({ value, row, onCommit }) {
             <span>1</span>
             <span>64</span>
           </div>
+          <div className="division-presets">
+            {[4, 6, 8, 12, 16].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                aria-pressed={draft === preset}
+                onClick={() => setDraft(preset)}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
           <div className="division-buttons">
             <button type="button" onClick={() => dialog.current.close()}>
               {t("Zrušit")}

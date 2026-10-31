@@ -364,6 +364,22 @@
   margin: 8px;
   padding: 8px;
 }
+.compact .add-row .action-icon {
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+}
+.compact .division-dialog h3 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.compact .division-dialog p {
+  display: none;
+}
 .compact .demo-banner {
   padding: 6px 0;
   border: 0;

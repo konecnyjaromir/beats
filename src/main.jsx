@@ -577,7 +577,10 @@ function App({ user, onLogout, demo }) {
       </aside>
       <main>
         {!user && (
-          <div className="account-bar compact-only-bar">{compactButton}</div>
+          <div className="account-bar compact-only-bar">
+            {compactButton}
+            <FullscreenButton onError={setMessage} />
+          </div>
         )}
         {demo && (
           <div className="demo-banner" role="status">
@@ -616,6 +619,7 @@ function App({ user, onLogout, demo }) {
               {user.name} · {user.email}
             </span>
             {compactButton}
+            <FullscreenButton onError={setMessage} />
             <button
               title={t("Odhlásit se")}
               disabled={transferBusy || loading}
@@ -748,7 +752,6 @@ function App({ user, onLogout, demo }) {
                 >
                   <ActionLabel icon="close">{t("Zavřít")}</ActionLabel>
                 </button>
-                <FullscreenButton onError={setMessage} />
                 <ExportDialog project={project} />
                 {savedId && (
                   <button

@@ -5,7 +5,7 @@ import "./landing.css";
 
 export function LandingPage({ children }) {
   const preview = useRef(null);
-  const screenshot = `./images/studio-${language}.png`;
+  const screenshot = `./images/studio-${language}.png?v=${__BEATS_VERSION__}`;
   return (
     <div className="landing">
       <header className="landing-header">
@@ -39,7 +39,7 @@ export function LandingPage({ children }) {
             </h1>
             <p className="landing-intro">
               {t(
-                "Od jednoduchého beatu po vlastní aranžmá. Poskládej bicí smyčku, dolaď každý úder a hraj pořád dokola.",
+                "Poskládej vlastní bicí groove. Přehrávej celou smyčku nebo jeden takt, dolaď každý úder a vezmi si rytmus s sebou.",
               )}
             </p>
             <div className="landing-signin" id="start">
@@ -106,8 +106,8 @@ export function LandingPage({ children }) {
             <span>{t("BPM pro tvoje tempo")}</span>
           </div>
           <div>
-            <strong>JSON / ZIP</strong>
-            <span>{t("tvoje smyčky s tebou")}</span>
+            <strong>MIDI / PDF</strong>
+            <span>{t("do hudebního programu i do not")}</span>
           </div>
         </section>
 
@@ -138,7 +138,7 @@ export function LandingPage({ children }) {
               <h3>{t("Naklikej svůj groove")}</h3>
               <p>
                 {t(
-                  "Vyber nástroje a rozmísti údery. Jemné ghost notes, běžné údery i silné akcenty mají vlastní zvukové samply.",
+                  "Kombinuj rovné osminy s triolami: každý nástroj má vlastní dělení. Tři síly úderu mají vlastní samply, od jemných ghost notes po akcenty.",
                 )}
               </p>
             </article>
@@ -161,7 +161,7 @@ export function LandingPage({ children }) {
               <h3>{t("Dej každému taktu prostor")}</h3>
               <p>
                 {t(
-                  "Přidávej a duplikuj takty. Měň jejich taktové označení i dělení jednotlivých řádků a sleduj rytmus při přehrávání.",
+                  "Přesouvej takty tažením myší. Nový takt převezme rozložení předchozího, duplikát i jeho údery. Taktové označení nastavíš pro každý takt zvlášť.",
                 )}
               </p>
             </article>
@@ -171,12 +171,12 @@ export function LandingPage({ children }) {
               </span>
               <div className="landing-mini-files" aria-hidden="true">
                 <span>↳ groove.json</span>
-                <span>↓ loops.zip</span>
+                <span>↓ groove.mid · groove.pdf</span>
               </div>
               <h3>{t("Vrať se ke svým nápadům")}</h3>
               <p>
                 {t(
-                  "Ulož si vlastní knihovnu. Exportuj jednu smyčku nebo všechny najednou a kdykoliv je importuj zpět.",
+                  "Exportuj MIDI do hudebního programu nebo PDF s bubenickými notami ve společné osnově. JSON a ZIP slouží k záloze a opětovnému importu smyček.",
                 )}
               </p>
             </article>

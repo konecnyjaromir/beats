@@ -1,5 +1,15 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Poskládej vlastní bicí groove. Přehrávej celou smyčku nebo jeden takt, dolaď každý úder a vezmi si rytmus s sebou.":
+    "Build your own drum groove. Play the full loop or a single bar, refine every hit and take your rhythm with you.",
+  "Kombinuj rovné osminy s triolami: každý nástroj má vlastní dělení. Tři síly úderu mají vlastní samply, od jemných ghost notes po akcenty.":
+    "Combine straight eighths with triplets: each instrument has its own subdivision. Three velocity layers use separate samples, from soft ghost notes to accents.",
+  "Přesouvej takty tažením myší. Nový takt převezme rozložení předchozího, duplikát i jeho údery. Taktové označení nastavíš pro každý takt zvlášť.":
+    "Drag bars to rearrange them. New bars inherit the previous layout; duplicates include its hits too. Set a different time signature for each bar.",
+  "Exportuj MIDI do hudebního programu nebo PDF s bubenickými notami ve společné osnově. JSON a ZIP slouží k záloze a opětovnému importu smyček.":
+    "Export MIDI to your music software or a PDF drum score on a shared staff. Use JSON and ZIP to back up and re-import your loops.",
+  "do hudebního programu i do not": "from music software to sheet music",
+
   "Přesuň takt tažením. Klávesnicí: Alt + šipka vlevo nebo vpravo.":
     "Drag to move this bar. Keyboard: Alt + Left or Right arrow.",
   "Legenda nástrojů": "Instrument legend",

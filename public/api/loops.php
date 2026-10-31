@@ -70,7 +70,7 @@ function validate(array $p): array
         $numerator = $b["numerator"] ?? ($p["numerator"] ?? 4);
         $denominator = $b["denominator"] ?? ($p["denominator"] ?? 4);
         if (
-            !in_array($numerator, [3, 4, 5, 6, 7, 8], true) ||
+            !integer($numerator, 1, 24) ||
             !in_array($denominator, [4, 8, 16], true)
         ) {
             fail("Neplatné označení taktu.");

@@ -724,7 +724,7 @@ function App({ user, onLogout, demo }) {
                       editBar((b) => ({ ...b, numerator: +e.target.value }))
                     }
                   >
-                    {[3, 4, 5, 6, 7, 8].map((n) => (
+                    {Array.from({ length: 24 }, (_, i) => i + 1).map((n) => (
                       <option key={n}>{n}</option>
                     ))}
                   </select>

@@ -200,6 +200,20 @@ try {
   assert.equal(list.length, 1);
   assert.equal(list[0].bpm, 137);
   assert.deepEqual(list[0].meters, ["4/4", "7/8"]);
+  for (let numerator = 1; numerator <= 24; numerator++) {
+    const meter = structuredClone(p);
+    meter.bars[1].numerator = numerator;
+    assert.equal((await req("POST", meter)).status, 200);
+    assert.equal(
+      (await (await req("GET", undefined, p.id)).json()).bars[1].numerator,
+      numerator,
+    );
+  }
+  for (const numerator of [0, 25, 1.5, "4"]) {
+    const meter = structuredClone(p);
+    meter.bars[1].numerator = numerator;
+    assert.equal((await req("POST", meter)).status, 400);
+  }
   const invalid = structuredClone(p);
   invalid.bars[1].denominator = 3;
   assert.equal((await req("POST", invalid)).status, 400);

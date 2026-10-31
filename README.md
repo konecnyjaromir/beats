@@ -6,7 +6,7 @@ A browser-based drum sequencer built with React, Web Audio and PHP. Create acous
 
 - 18 drum and percussion sounds from AVL Black Pearl, bundled locally with attribution.
 - Three hit strengths, including quiet ghost notes. Each strength uses a separate recording; additional gain shaping widens the dynamic range.
-- Independent time signatures for every bar: 3–8 beats over quarter, eighth or sixteenth notes.
+- Independent time signatures for every bar: 1–24 beats over quarter, eighth or sixteenth notes.
 - 1–64 equally spaced steps per row, up to 32 rows per bar and 1,000 bars per loop by default.
 - Tempo from 30 to 300 BPM, measured in quarter notes per minute.
 - Loop playback with a moving playhead and automatic navigation to the active bar.

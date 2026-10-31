@@ -369,7 +369,7 @@
   align-items: center;
   justify-content: center;
 }
-.compact .division-dialog h3 {
+.compact .division-picker-dialog h3 {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -377,7 +377,7 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.compact .division-dialog p {
+.compact .division-picker-dialog p {
   display: none;
 }
 .compact .demo-banner {

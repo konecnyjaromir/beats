@@ -22,7 +22,7 @@ export function DivisionPicker({ value, row, onCommit }) {
       </button>
       <dialog
         ref={dialog}
-        className="division-dialog"
+        className="division-dialog division-picker-dialog"
         aria-labelledby={titleId}
       >
         <form

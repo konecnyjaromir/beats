@@ -59,7 +59,7 @@ export function FullscreenButton({ onError }) {
       }
     >
       <ActionLabel icon="fullscreen">
-        {active ? t("⛶ Zpět do okna") : t("⛶ Na celou obrazovku")}
+        {active ? t("Zpět do okna") : t("Celá obrazovka")}
       </ActionLabel>
     </button>
   );

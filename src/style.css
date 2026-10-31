@@ -450,6 +450,22 @@ header {
 .account-bar {
   flex-wrap: wrap;
 }
+.account-bar > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 9px 12px;
+}
+.account-bar .action-icon {
+  display: inline-flex;
+}
+.account-bar button svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
 .subtitle {
   display: flex;
   align-items: center;

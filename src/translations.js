@@ -1,5 +1,10 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Kompaktní": "Compact",
+  "Celá obrazovka": "Fullscreen",
+  "Zpět do okna": "Exit fullscreen",
+  "Opravdu se chceš odhlásit?": "Are you sure you want to sign out?",
+  "Opravdu se chceš odhlásit? Neuložené změny se ztratí.": "Are you sure you want to sign out? Unsaved changes will be lost.",
   Vypnout: "Disable",
   Zapnout: "Enable",
   Použít: "Apply",

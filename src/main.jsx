@@ -78,6 +78,7 @@ function App({ user, onLogout, demo }) {
       }}
     >
       <TransportIcon name="compact" />
+      <span className="action-label">{t("Kompaktní")}</span>
     </button>
   );
   const [accountPage, setAccountPage] = useState(false);
@@ -637,12 +638,19 @@ function App({ user, onLogout, demo }) {
               title={t("Odhlásit se")}
               disabled={transferBusy || loading}
               onClick={() =>
-                guard(async () => {
-                  try {
-                    await onLogout();
-                  } catch (e) {
-                    setMessage(e.message);
-                  }
+                setConfirm({
+                  title: t("Odhlásit se"),
+                  text: dirty
+                    ? t("Opravdu se chceš odhlásit? Neuložené změny se ztratí.")
+                    : t("Opravdu se chceš odhlásit?"),
+                  label: t("Odhlásit se"),
+                  action: async () => {
+                    try {
+                      await onLogout();
+                    } catch (e) {
+                      setMessage(e.message);
+                    }
+                  },
                 })
               }
             >

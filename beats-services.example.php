@@ -7,6 +7,8 @@ if (!defined("BEATS_INTERNAL")) {
 return [
     // Supported pairs: json + Basic Auth, mysql + Google sign-in.
     "mode" => "json",
+    // Sole administrator: exact verified Google email. Empty disables admin access.
+    "admin_email" => "",
     "limits" => ["max_loops" => 1000, "max_bars" => 1000],
     "database" => [
         "host" => "localhost",

@@ -1,3 +1,4 @@
+import { AdminPanel } from "./AdminPanel.jsx";
 import { ExportDialog } from "./ExportDialog.jsx";
 import { TransportIcon } from "./TransportIcon.jsx";
 import { t, language } from "./i18n.js";
@@ -52,6 +53,7 @@ async function serverApi(method = "GET", body, id) {
 function App({ user, onLogout, demo }) {
   const api = demo?.request || serverApi;
   const [accountPage, setAccountPage] = useState(false);
+  const [adminPage, setAdminPage] = useState(false);
   const [project, setProject] = useState(() =>
       demo ? normalizeProject(demo.first) : null,
     ),
@@ -142,6 +144,7 @@ function App({ user, onLogout, demo }) {
   }
   function home() {
     setAccountPage(false);
+    setAdminPage(false);
     navigationRef.current++;
     stop();
     setProject(null);
@@ -153,6 +156,7 @@ function App({ user, onLogout, demo }) {
   }
   function createLoop() {
     setAccountPage(false);
+    setAdminPage(false);
     navigationRef.current++;
     stop();
     setProject({ ...initial(), name: t("Nová smyčka"), bars: [bar()] });
@@ -330,6 +334,7 @@ function App({ user, onLogout, demo }) {
   }
   async function load(id) {
     setAccountPage(false);
+    setAdminPage(false);
     const navigation = ++navigationRef.current;
     setLoading(true);
     stop();
@@ -501,6 +506,22 @@ function App({ user, onLogout, demo }) {
             {t("Tři dynamické vrstvy")}{" "}
           </p>
         </div>
+        {user?.isAdmin && !demo && (
+          <button
+            className="account-menu-link"
+            disabled={loading || transferBusy}
+            aria-current={adminPage ? "page" : undefined}
+            onClick={() => {
+              stop();
+              setMessage("");
+              setAccountPage(false);
+              setAdminPage(true);
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }}
+          >
+            {t("Administrační panel")}
+          </button>
+        )}
         {user && (
           <button
             className="account-menu-link"
@@ -509,6 +530,7 @@ function App({ user, onLogout, demo }) {
               stop();
               setMessage("");
               setAccountPage(true);
+              setAdminPage(false);
               window.scrollTo({ top: 0, behavior: "instant" });
             }}
             aria-current={accountPage ? "page" : undefined}
@@ -567,6 +589,9 @@ function App({ user, onLogout, demo }) {
               {t("Odhlásit se")}
             </button>
           </div>
+        )}
+        {adminPage && user?.isAdmin && (
+          <AdminPanel onClose={() => setAdminPage(false)} />
         )}
         {accountPage && user && (
           <section
@@ -629,7 +654,7 @@ function App({ user, onLogout, demo }) {
             </div>
           </section>
         )}
-        {!accountPage && !project && (
+        {!adminPage && !accountPage && !project && (
           <HomeScreen
             loops={filteredLibrary}
             total={library.length}
@@ -651,7 +676,7 @@ function App({ user, onLogout, demo }) {
             </button>
           </div>
         )}
-        {!accountPage && project && (
+        {!adminPage && !accountPage && project && (
           <>
             <header className="project-header">
               <div className="project-heading">

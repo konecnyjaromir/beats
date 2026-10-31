@@ -85,3 +85,12 @@ function owner_id(): int
     }
     return (int) $_SESSION["user_id"];
 }
+function is_admin_user(?array $user): bool
+{
+    $email = service_config()["admin_email"] ?? "";
+    return mysql_mode() &&
+        $user !== null &&
+        is_string($email) &&
+        filter_var($email, FILTER_VALIDATE_EMAIL) !== false &&
+        strtolower($user["email"] ?? "") === strtolower($email);
+}

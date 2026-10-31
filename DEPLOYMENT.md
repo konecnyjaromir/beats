@@ -1,5 +1,11 @@
 # Deployment
 
+## Administrator
+
+Set the single `admin_email` value in your private `beats-services.php` to the administrator's verified Google email. For example: `'admin_email' => 'owner@example.com',`. Empty or missing disables administration; this is not a list and grants no access to other accounts. Administration is available only in MySQL/Google mode. The sidebar link shows a read-only, paginated user list with names, emails and saved-loop counts, including zero. Authorization is checked against the current database session and configuration on every admin request. No schema migration is needed.
+
+Code-only `beats-update.zip` deliberately excludes private configuration. When enabling this feature, also update `beats-services.php` (the private `beats-server.zip` includes the configured copy). Do not publish that file or archive.
+
 ## MySQL and Google sign-in
 
 Use PHP 8.2+ with `pdo_mysql`, `openssl`, `curl`, and `mbstring`, and MySQL 5.7+/8 or MariaDB 10.2+ with InnoDB. PHP must be able to reach Google's HTTPS certificate endpoint. The database password stays in the guarded `beats-services.php` file; never publish this file in Git.

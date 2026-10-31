@@ -1,6 +1,8 @@
 <?php
 // API error translations. User-provided names and data are never translated.
 return [
+    "Přístup pouze pro administrátora." => "Administrator access required.",
+    "Seznam uživatelů se nepodařilo načíst." => "Could not load users.",
     "Přihlaste se přes Google." => "Sign in with Google.",
     "Neplatné přihlášení Google." => "Invalid Google sign-in.",
     "Příliš mnoho pokusů. Zkuste to za minutu." =>

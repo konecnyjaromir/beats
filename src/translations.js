@@ -1,5 +1,16 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Administrační panel": "Administration",
+  "Uživatelé a počet jejich uložených smyček.":
+    "Users and the number of their saved loops.",
+  "Celkem uživatelů: {0}": "Total users: {0}",
+  Jméno: "Name",
+  "Počet smyček": "Loop count",
+  "Žádní uživatelé.": "No users.",
+  Předchozí: "Previous",
+  Další: "Next",
+  "Seznam uživatelů se nepodařilo načíst.": "Could not load users.",
+
   "Poskládej vlastní bicí groove. Přehrávej celou smyčku nebo jeden takt, dolaď každý úder a vezmi si rytmus s sebou.":
     "Build your own drum groove. Play the full loop or a single bar, refine every hit and take your rhythm with you.",
   "Kombinuj rovné osminy s triolami: každý nástroj má vlastní dělení. Tři síly úderu mají vlastní samply, od jemných ghost notes po akcenty.":

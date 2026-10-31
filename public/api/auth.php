@@ -15,7 +15,11 @@ try {
         $user = session_user();
         respond([
             "user" => $user
-                ? ["name" => $user["name"], "email" => $user["email"]]
+                ? [
+                    "name" => $user["name"],
+                    "email" => $user["email"],
+                    "isAdmin" => is_admin_user($user),
+                ]
                 : null,
             "csrf" => $_SESSION["csrf"],
             "nonce" => $_SESSION["nonce"],
@@ -175,7 +179,11 @@ try {
         "nonce" => bin2hex(random_bytes(32)),
     ];
     respond([
-        "user" => ["name" => $name, "email" => $claims["email"]],
+        "user" => [
+            "name" => $name,
+            "email" => $claims["email"],
+            "isAdmin" => is_admin_user(["email" => $claims["email"]]),
+        ],
         "csrf" => $_SESSION["csrf"],
     ]);
 } catch (Throwable $e) {

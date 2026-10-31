@@ -36,7 +36,7 @@ const quote = (s) =>
   "'" + s.replaceAll("\\", "\\\\").replaceAll("'", "\\'") + "'";
 await writeFile(
   path.join(root, "beats-services.php"),
-  `<?php if (!defined('BEATS_INTERNAL')) {http_response_code(404);exit;} return ['mode'=>'mysql','limits'=>['max_loops'=>8,'max_bars'=>1000],'database'=>['host'=>${quote(env.BEATS_TEST_DB_HOST)},'port'=>${Number(env.BEATS_TEST_DB_PORT)},'name'=>'${database}','user'=>${quote(env.BEATS_TEST_DB_USER)},'password'=>${quote(env.BEATS_TEST_DB_PASSWORD)},'prefix'=>'tenant_'],'google'=>['client_id'=>'test.apps.googleusercontent.com','allowed_emails'=>[]]];`,
+  `<?php if (!defined('BEATS_INTERNAL')) {http_response_code(404);exit;} return ['admin_email'=>'admin@example.com','mode'=>'mysql','limits'=>['max_loops'=>8,'max_bars'=>1000],'database'=>['host'=>${quote(env.BEATS_TEST_DB_HOST)},'port'=>${Number(env.BEATS_TEST_DB_PORT)},'name'=>'${database}','user'=>${quote(env.BEATS_TEST_DB_USER)},'password'=>${quote(env.BEATS_TEST_DB_PASSWORD)},'prefix'=>'tenant_'],'google'=>['client_id'=>'test.apps.googleusercontent.com','allowed_emails'=>[]]];`,
 );
 await writeFile(
   path.join(root, "beats-config.php"),
@@ -210,6 +210,65 @@ try {
     ).status,
     200,
   );
+  assert.equal((await client()("api/admin.php")).status, 401);
+  assert.equal((await a("api/auth.php")).data.user.isAdmin, false);
+  assert.equal((await a("api/admin.php?email=admin@example.com")).status, 403);
+  assert.equal(
+    (
+      await b("api/admin.php", "GET", undefined, {
+        "X-Admin-Email": "admin@example.com",
+      })
+    ).status,
+    403,
+  );
+  const administrator = client();
+  const adminNonce = (await administrator("api/auth.php")).data.nonce;
+  const adminLogin = await administrator("api/auth.php", "POST", {
+    credential: token(adminNonce, "admin"),
+  });
+  assert.equal(adminLogin.data.user.isAdmin, true);
+  assert.equal((await administrator("api/auth.php")).data.user.isAdmin, true);
+  admin(
+    `INSERT INTO \`${database}\`.tenant_users (google_sub,email,name,created_at) VALUES ('empty','empty@example.com','Empty',UTC_TIMESTAMP())`,
+  );
+  const overview = await administrator("api/admin.php");
+  assert.equal(overview.status, 200);
+  assert.equal(overview.data.total, 4);
+  assert.equal(
+    overview.data.users.find((u) => u.email === "alice@example.com").loop_count,
+    6,
+  );
+  assert.equal(
+    overview.data.users.find((u) => u.email === "empty@example.com").loop_count,
+    0,
+  );
+  assert.ok(
+    overview.data.users.every(
+      (u) => Object.keys(u).sort().join(",") === "email,loop_count,name",
+    ),
+  );
+  assert.equal((await administrator("api/admin.php", "POST", {})).status, 405);
+  assert.equal((await administrator("api/admin.php?page=-1")).status, 400);
+  assert.equal(
+    (await administrator("api/admin.php?page=2")).data.users.length,
+    0,
+  );
+  const adminSettingsPath = path.join(root, "beats-services.php");
+  const adminSettings = await readFile(adminSettingsPath, "utf8");
+  await writeFile(
+    adminSettingsPath,
+    adminSettings.replace(
+      "'admin_email'=>'admin@example.com'",
+      "'admin_email'=>''",
+    ),
+  );
+  assert.equal(
+    (await administrator("api/admin.php")).status,
+    403,
+    "Existing sessions lose admin access when configuration is disabled",
+  );
+  assert.equal((await administrator("api/auth.php")).data.user.isAdmin, false);
+  await writeFile(adminSettingsPath, adminSettings);
   const seeds = (await a("api/loops.php")).data;
   assert.equal(seeds.length, 6, "New accounts receive six starter rhythms");
   assert.deepEqual(

@@ -1,5 +1,7 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Kompaktní zobrazení": "Compact view",
+  "Nástroj řádku {0}: {1}": "Row {0} instrument: {1}",
   "Administrační panel": "Administration",
   "Uživatelé a počet jejich uložených smyček.":
     "Users and the number of their saved loops.",

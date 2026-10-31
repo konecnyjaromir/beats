@@ -1,5 +1,9 @@
 # Deployment
 
+## Sign-in lifetime
+
+Google sign-in persists for 30 days of inactivity. Authenticated requests renew the persistent HttpOnly/SameSite cookie and server expiry; HTTPS also enables Secure. Session files live under `private/sessions/` with individual PHP guards and a dedicated 30-day garbage collector, independent of the hosting provider's default short PHP session lifetime. The directory must be writable by PHP and must never be included in published archives or backups intended for sharing. Updating from the previous session store requires one fresh sign-in. Explicit logout invalidates the session immediately.
+
 ## Administrator
 
 Set the single `admin_email` value in your private `beats-services.php` to the administrator's verified Google email. For example: `'admin_email' => 'owner@example.com',`. Empty or missing disables administration; this is not a list and grants no access to other accounts. Administration is available only in MySQL/Google mode. The sidebar link shows a read-only, paginated user list with names, emails and saved-loop counts, including zero. Authorization is checked against the current database session and configuration on every admin request. No schema migration is needed.

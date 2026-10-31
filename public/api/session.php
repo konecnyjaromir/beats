@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+const BEATS_SESSION_IDLE_SECONDS = 30 * 86400;
 
 function app_session(): void
 {
@@ -18,8 +19,24 @@ function app_session(): void
     session_name("beats_" . substr(hash("sha256", $path), 0, 12));
     ini_set("session.use_strict_mode", "1");
     ini_set("session.use_only_cookies", "1");
+    ini_set("session.gc_maxlifetime", (string) BEATS_SESSION_IDLE_SECONDS);
+    ini_set("session.gc_probability", "1");
+    ini_set("session.gc_divisor", "100");
+    $directory = storage_dir() . "/sessions";
+    if (
+        !is_dir($directory) &&
+        !mkdir($directory, 0700, true) &&
+        !is_dir($directory)
+    ) {
+        throw new RuntimeException("Cannot create session storage");
+    }
+    require_once __DIR__ . "/session-store.php";
+    session_set_save_handler(
+        new BeatsSessionStore($directory, BEATS_SESSION_IDLE_SECONDS),
+        true,
+    );
     session_set_cookie_params([
-        "lifetime" => 0,
+        "lifetime" => BEATS_SESSION_IDLE_SECONDS,
         "path" => $path,
         "secure" => isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off",
         "httponly" => true,
@@ -28,8 +45,15 @@ function app_session(): void
     if (!session_start()) {
         throw new RuntimeException("Cannot start session");
     }
-    if (isset($_SESSION["expires"]) && $_SESSION["expires"] < time()) {
+    if (isset($_SESSION["expires"]) && $_SESSION["expires"] <= time()) {
         $_SESSION = [];
+    }
+    if (isset($_SESSION["user_id"])) {
+        $_SESSION["expires"] = time() + BEATS_SESSION_IDLE_SECONDS;
+        $cookie = session_get_cookie_params();
+        unset($cookie["lifetime"]);
+        $cookie["expires"] = $_SESSION["expires"];
+        setcookie(session_name(), session_id(), $cookie);
     }
     $_SESSION["csrf"] ??= bin2hex(random_bytes(32));
     $_SESSION["nonce"] ??= bin2hex(random_bytes(32));

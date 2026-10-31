@@ -1,3 +1,4 @@
+import { ActionLabel } from "./TransportIcon.jsx";
 import { t } from "./i18n.js";
 import React, { useEffect, useState } from "react";
 
@@ -57,7 +58,9 @@ export function FullscreenButton({ onError }) {
             : t("Na celou obrazovku")
       }
     >
-      {active ? t("⛶ Zpět do okna") : t("⛶ Na celou obrazovku")}
+      <ActionLabel icon="fullscreen">
+        {active ? t("⛶ Zpět do okna") : t("⛶ Na celou obrazovku")}
+      </ActionLabel>
     </button>
   );
 }

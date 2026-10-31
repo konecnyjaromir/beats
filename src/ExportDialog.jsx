@@ -1,3 +1,4 @@
+import { ActionLabel } from "./TransportIcon.jsx";
 import React, { useRef, useState, useId } from "react";
 import { t } from "./i18n.js";
 import { downloadFile, loopJson, loopFilename } from "./loopFiles.js";
@@ -47,12 +48,13 @@ export function ExportDialog({ project }) {
       <button
         type="button"
         aria-haspopup="dialog"
+        title={t("Export")}
         onClick={() => {
           setError("");
           dialog.current.showModal();
         }}
       >
-        {t("Export")}
+        <ActionLabel icon="export">{t("Export")}</ActionLabel>
       </button>
       <dialog
         className="division-dialog export-dialog"

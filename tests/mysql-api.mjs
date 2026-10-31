@@ -98,7 +98,7 @@ function client() {
       },
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
-    const setCookie = response.headers.get("set-cookie");
+    const setCookie = response.headers.getSetCookie().at(-1);
     if (setCookie) cookie = setCookie.split(";")[0];
     let data;
     const text = await response.text();
@@ -269,6 +269,49 @@ try {
   );
   assert.equal((await administrator("api/auth.php")).data.user.isAdmin, false);
   await writeFile(adminSettingsPath, adminSettings);
+  const renewed = await administrator("api/auth.php");
+  const persistentCookie = renewed.headers.getSetCookie().at(-1);
+  assert.match(persistentCookie, /Max-Age=2592000/i);
+  assert.match(persistentCookie, /HttpOnly/i);
+  assert.match(persistentCookie, /SameSite=Lax/i);
+  const sessionId = persistentCookie.split(";")[0].split("=")[1];
+  assert.match(sessionId, /^[a-zA-Z0-9,-]{16,128}$/);
+  const sessionFile = path.join(
+    root,
+    "private/sessions",
+    sessionId + ".session.php",
+  );
+  let sessionData = await readFile(sessionFile, "utf8");
+  assert.ok(sessionData.startsWith("<?php http_response_code(404)"));
+  const expiry = Number(sessionData.match(/expires\|i:(\d+);/)[1]);
+  assert.ok(expiry >= Math.floor(Date.now() / 1000) + 2591990);
+  assert.equal(
+    (await client()("private/sessions/" + sessionId + ".session.php")).status,
+    404,
+  );
+  await writeFile(
+    sessionFile,
+    sessionData.replace(
+      /expires\|i:\d+;/,
+      `expires|i:${Math.floor(Date.now() / 1000) + 60};`,
+    ),
+  );
+  assert.equal((await administrator("api/admin.php")).status, 200);
+  sessionData = await readFile(sessionFile, "utf8");
+  assert.ok(
+    Number(sessionData.match(/expires\|i:(\d+);/)[1]) >=
+      Math.floor(Date.now() / 1000) + 2591990,
+    "Activity renews the full inactivity window",
+  );
+  await writeFile(
+    sessionFile,
+    sessionData.replace(/expires\|i:\d+;/, "expires|i:1;"),
+  );
+  assert.equal(
+    (await administrator("api/admin.php")).status,
+    401,
+    "Expired sessions cannot be refreshed into valid sessions",
+  );
   const seeds = (await a("api/loops.php")).data;
   assert.equal(seeds.length, 6, "New accounts receive six starter rhythms");
   assert.deepEqual(

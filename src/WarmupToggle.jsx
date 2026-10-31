@@ -11,6 +11,8 @@ export function WarmupToggle({ checked, disabled, onChange }) {
       <button
         type="button"
         className="transport-button transport-toggle"
+        aria-label={t("Zahřátí USB adaptéru")}
+        title={t("Zahřátí USB adaptéru")}
         aria-pressed={checked}
         disabled={disabled}
         aria-haspopup="dialog"

@@ -1,0 +1,422 @@
+.action-icon {
+  display: none;
+}
+.compact-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+}
+.compact-toggle[aria-pressed="true"] {
+  background: #303c28;
+  color: #c5ed82;
+  border-color: #91b45f;
+}
+.instrument-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+  padding: 5px 3px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 11px;
+}
+.instrument-picker > span:not(.instrument-chevron) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drum-icon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  color: #cad8bd;
+}
+.instrument-chevron {
+  margin-left: auto;
+  color: #a0ad96;
+}
+.instrument-dialog {
+  width: min(520px, calc(100vw - 24px));
+  max-height: 85dvh;
+  overflow: auto;
+}
+.instrument-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.instrument-dialog-heading button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 22px;
+}
+.instrument-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 18px;
+}
+.instrument-options button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 10px;
+  text-align: left;
+  font-size: 12px;
+}
+.instrument-options button[aria-pressed="true"] {
+  border-color: #c5ed82;
+  background: #303c28;
+}
+.instrument-dialog-compact .instrument-options {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.instrument-dialog-compact .instrument-options button {
+  justify-content: center;
+  min-height: 56px;
+}
+.instrument-dialog-compact .drum-icon {
+  width: 32px;
+  height: 32px;
+  flex-basis: 32px;
+}
+.app.compact main {
+  padding: 12px;
+  min-width: 0;
+}
+.compact .action-icon {
+  display: inline-flex;
+}
+.compact .action-label,
+.compact .transport-button > span {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+.compact .account-identity,
+.compact .project-heading .eyebrow,
+.compact .section-label,
+.compact .editor-head .eyebrow,
+.compact .editor-footer,
+.compact .hint,
+.compact .audition,
+.compact .bar-grip,
+.compact .bar-tab small,
+.compact .add-row > span:not(.action-icon):not(.action-label),
+.compact .demo-banner strong,
+.compact .demo-banner p {
+  display: none;
+}
+.compact .account-bar {
+  margin: 0 0 8px;
+  gap: 6px;
+  min-height: 44px;
+}
+.compact .account-bar button,
+.compact .save-actions > button,
+.compact .bar-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 10px;
+}
+.compact .project-header {
+  display: block;
+  margin-bottom: 10px;
+}
+.compact .project-heading {
+  position: relative;
+  padding-right: 16px;
+}
+.compact .title {
+  font-size: 20px;
+  line-height: 1.3;
+}
+.compact .subtitle {
+  position: absolute;
+  right: 0;
+  top: 12px;
+  font-size: 0;
+  margin: 0;
+  gap: 0;
+}
+.compact .subtitle > span:not(.small-dot) {
+  display: none;
+}
+.compact .save-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.compact .transport {
+  padding: 8px;
+  gap: 8px;
+  border-radius: 10px;
+}
+.compact .play-controls {
+  flex-basis: auto;
+  display: flex;
+  gap: 6px;
+}
+.compact .play-controls .transport-button {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 10px;
+  justify-content: center;
+  position: relative;
+}
+.compact .transport-toggle[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c5ed82;
+}
+.compact .control {
+  border: 0;
+  padding: 0;
+}
+.compact .control > label {
+  display: none;
+}
+.compact .tempo-trigger {
+  font-size: 20px;
+  min-width: 64px;
+  min-height: 44px;
+  padding: 3px;
+}
+.compact .tempo-step {
+  width: 38px;
+  height: 44px;
+}
+.compact .meter {
+  gap: 5px;
+}
+.compact .meter select {
+  font-size: 19px;
+  min-height: 44px;
+}
+.compact .volume {
+  width: 90px;
+  flex: 1 1 90px;
+  margin: 0;
+}
+.compact-volume-icon {
+  display: none;
+}
+.compact .compact-volume-icon {
+  display: inline-flex;
+  flex: 0 0 20px;
+  color: #97ad83;
+}
+.compact .volume {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.compact .volume input {
+  min-width: 0;
+}
+.compact .volume input {
+  height: 28px;
+  margin: 0;
+}
+.compact .arrangement {
+  margin: 10px 0;
+}
+.compact .bar-tabs {
+  gap: 6px;
+  padding: 3px 0;
+}
+.compact .bar-tab,
+.compact .add-bar {
+  min-width: 44px;
+  height: 44px;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.compact .bar-tab > span {
+  margin: 0;
+  font-size: 13px;
+}
+.compact .editor {
+  border-radius: 10px;
+}
+.compact .editor-head {
+  padding: 8px;
+  gap: 6px;
+}
+.compact .editor-head h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.compact .editor-head h2 span {
+  margin-left: 5px;
+  font-size: 10px;
+}
+.compact .bar-actions {
+  gap: 6px;
+}
+.compact .grid-scroll {
+  padding: 0 4px;
+  overscroll-behavior-x: contain;
+}
+.compact .grid-content {
+  min-width: var(--compact-grid-width, 608px);
+}
+.compact .grid-labels,
+.compact .drum-row {
+  grid-template-columns: 44px 40px minmax(0, 1fr) 64px;
+  gap: 4px;
+}
+.compact .grid-labels {
+  margin: 0 0 6px;
+  font-size: 9px;
+}
+.compact .grid-labels > span {
+  visibility: hidden;
+}
+.compact .drum-row {
+  padding: 5px 0;
+}
+.compact .instrument {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  min-height: 44px;
+  background: #202328;
+}
+.compact .instrument-picker {
+  height: 44px;
+  padding: 4px;
+  gap: 0;
+}
+.compact .instrument-chevron {
+  font-size: 10px;
+}
+.compact .division {
+  position: sticky;
+  left: 48px;
+  z-index: 3;
+  width: 40px;
+  height: 44px;
+  background: #25292f;
+}
+.compact .division > span {
+  display: none;
+}
+.compact .steps {
+  gap: 3px;
+}
+.compact .step {
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  font-size: 10px;
+}
+.compact .row-actions {
+  position: sticky;
+  right: 0;
+  z-index: 3;
+  background: #202328;
+  gap: 0;
+}
+.compact .row-actions button {
+  width: 32px;
+  height: 44px;
+  min-height: 44px;
+  padding: 5px;
+  font-size: 20px;
+}
+.compact .row-actions svg {
+  width: 20px;
+  height: 20px;
+}
+.compact .add-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 8px;
+  padding: 8px;
+}
+.compact .demo-banner {
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  margin: 0 0 6px;
+  justify-content: flex-end;
+}
+.compact .demo-banner > div {
+  display: none;
+}
+.compact .demo-banner button {
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+}
+.compact footer {
+  font-size: 0;
+  padding: 10px 0;
+  margin-top: 10px;
+}
+.compact footer a {
+  font-size: 9px;
+}
+.compact footer > span:not(.app-version) {
+  display: none;
+}
+.compact footer .app-version {
+  font-size: 9px;
+}
+@media (max-width: 800px) {
+  .app.compact.sidebar-collapsed aside {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 44px;
+    padding: 0;
+    border: 0;
+    z-index: 5;
+    background: transparent;
+  }
+  .app.compact.sidebar-collapsed .sidebar-toggle {
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+  }
+  .app.compact main {
+    width: 100%;
+    padding: 8px;
+  }
+  .compact .account-bar {
+    padding-left: 50px;
+  }
+  .compact .instrument-dialog {
+    padding: 16px;
+  }
+}

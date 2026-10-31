@@ -1,6 +1,8 @@
+import { InstrumentPicker } from "./InstrumentPicker.jsx";
+import "./compact.css";
 import { AdminPanel } from "./AdminPanel.jsx";
 import { ExportDialog } from "./ExportDialog.jsx";
-import { TransportIcon } from "./TransportIcon.jsx";
+import { TransportIcon, ActionLabel } from "./TransportIcon.jsx";
 import { t, language } from "./i18n.js";
 import React, { useState, useRef, useEffect } from "react";
 import { createRoot } from "react-dom/client";
@@ -52,6 +54,31 @@ async function serverApi(method = "GET", body, id) {
 }
 function App({ user, onLogout, demo }) {
   const api = demo?.request || serverApi;
+  const [compact, setCompact] = useState(() => {
+    try {
+      return localStorage.getItem("beats-compact") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const compactButton = (
+    <button
+      className="compact-toggle"
+      type="button"
+      title={t("Kompaktní zobrazení")}
+      aria-label={t("Kompaktní zobrazení")}
+      aria-pressed={compact}
+      onClick={() => {
+        setCompact(!compact);
+        if (!compact) setSidebarCollapsed(true);
+        try {
+          localStorage.setItem("beats-compact", String(!compact));
+        } catch {}
+      }}
+    >
+      <TransportIcon name="compact" />
+    </button>
+  );
   const [accountPage, setAccountPage] = useState(false);
   const [adminPage, setAdminPage] = useState(false);
   const [project, setProject] = useState(() =>
@@ -72,7 +99,10 @@ function App({ user, onLogout, demo }) {
     [confirm, setConfirm] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
-      return localStorage.getItem("beats-sidebar-collapsed") === "true";
+      return (
+        localStorage.getItem("beats-sidebar-collapsed") === "true" ||
+        localStorage.getItem("beats-compact") === "true"
+      );
     } catch {
       return false;
     }
@@ -356,7 +386,13 @@ function App({ user, onLogout, demo }) {
     }
   }
   return (
-    <div className={"app" + (sidebarCollapsed ? " sidebar-collapsed" : "")}>
+    <div
+      className={
+        "app" +
+        (compact ? " compact" : "") +
+        (sidebarCollapsed ? " sidebar-collapsed" : "")
+      }
+    >
       <aside>
         <button
           className="sidebar-toggle"
@@ -540,6 +576,9 @@ function App({ user, onLogout, demo }) {
         )}
       </aside>
       <main>
+        {!user && (
+          <div className="account-bar compact-only-bar">{compactButton}</div>
+        )}
         {demo && (
           <div className="demo-banner" role="status">
             <div>
@@ -565,16 +604,20 @@ function App({ user, onLogout, demo }) {
                 })
               }
             >
-              {t("Ukončit demo / přihlásit se")}
+              <ActionLabel icon="logout">
+                {t("Ukončit demo / přihlásit se")}
+              </ActionLabel>
             </button>
           </div>
         )}
         {user && (
           <div className="account-bar">
-            <span>
+            <span className="account-identity">
               {user.name} · {user.email}
             </span>
+            {compactButton}
             <button
+              title={t("Odhlásit se")}
               disabled={transferBusy || loading}
               onClick={() =>
                 guard(async () => {
@@ -586,7 +629,7 @@ function App({ user, onLogout, demo }) {
                 })
               }
             >
-              {t("Odhlásit se")}
+              <ActionLabel icon="logout">{t("Odhlásit se")}</ActionLabel>
             </button>
           </div>
         )}
@@ -698,24 +741,37 @@ function App({ user, onLogout, demo }) {
                 </div>
               </div>
               <div className="save-actions">
-                <button type="button" onClick={() => guard(home)}>
-                  {t("Zavřít")}
+                <button
+                  type="button"
+                  title={t("Zavřít")}
+                  onClick={() => guard(home)}
+                >
+                  <ActionLabel icon="close">{t("Zavřít")}</ActionLabel>
                 </button>
                 <FullscreenButton onError={setMessage} />
                 <ExportDialog project={project} />
                 {savedId && (
-                  <button disabled={loading} onClick={() => save(true)}>
+                  <button
+                    title={t("Uložit kopii")}
+                    disabled={loading}
+                    onClick={() => save(true)}
+                  >
                     {" "}
-                    {t("Uložit kopii")}{" "}
+                    <ActionLabel icon="copy">
+                      {t("Uložit kopii")}
+                    </ActionLabel>{" "}
                   </button>
                 )}
                 <button
                   className="primary"
+                  title={t("↓ Uložit smyčku")}
                   disabled={loading || !project.name.trim()}
                   onClick={() => save()}
                 >
                   {" "}
-                  {t("↓ Uložit smyčku")}{" "}
+                  <ActionLabel icon="save">
+                    {t("↓ Uložit smyčku")}
+                  </ActionLabel>{" "}
                 </button>
               </div>
             </header>
@@ -726,6 +782,8 @@ function App({ user, onLogout, demo }) {
                     "transport-button transport-play " +
                     (playing ? "active" : "")
                   }
+                  aria-label={playing ? t("Zastavit") : t("Přehrát")}
+                  title={playing ? t("Zastavit") : t("Přehrát")}
                   disabled={loading}
                   onClick={() => play()}
                 >
@@ -737,6 +795,8 @@ function App({ user, onLogout, demo }) {
                 <button
                   type="button"
                   className="transport-button"
+                  aria-label={t("Přehrát takt")}
+                  title={t("Přehrát takt")}
                   disabled={loading || playing}
                   onClick={() => play(true)}
                 >
@@ -746,6 +806,8 @@ function App({ user, onLogout, demo }) {
                 <button
                   type="button"
                   className="transport-button transport-toggle"
+                  aria-label={t("Opakovat smyčku")}
+                  title={t("Opakovat smyčku")}
                   aria-pressed={repeat}
                   disabled={loading || (playing && playingBar)}
                   onClick={() => {
@@ -812,28 +874,16 @@ function App({ user, onLogout, demo }) {
                   </select>
                 </div>
               </div>
-              <div className="loop-indicator">
-                ↻{" "}
-                <span>
-                  {" "}
-                  {playing && playingBar
-                    ? t("JEDEN TAKT")
-                    : repeat
-                      ? t("CELÁ SMYČKA")
-                      : t("JEDEN PRŮCHOD")}{" "}
-                  <small>
-                    {playing
-                      ? t("Hraje takt {0}", position.bar + 1)
-                      : t("Připraveno k přehrání")}
-                  </small>
-                </span>
-              </div>
               <div className="control volume">
+                <span className="compact-volume-icon">
+                  <TransportIcon name="volume" />
+                </span>
                 <label htmlFor="volume">
                   {" "}
                   {t("HLASITOST")} <span>{volume}%</span>
                 </label>
                 <input
+                  aria-label={t("HLASITOST")}
                   id="volume"
                   type="range"
                   min="0"
@@ -929,7 +979,11 @@ function App({ user, onLogout, demo }) {
                     <i className="bar-grip" aria-hidden="true">
                       ⠿
                     </i>{" "}
-                    {t("Takt")} {i + 1}
+                    {!compact && (
+                      <>
+                        {t("Takt")} {i + 1}
+                      </>
+                    )}
                     <small>
                       {b.numerator}/{b.denominator} · {b.rows.length}{" "}
                       {t("řádky")}{" "}
@@ -938,6 +992,7 @@ function App({ user, onLogout, demo }) {
                 ))}
                 <button
                   className="add-bar"
+                  title={t("＋ Přidat takt")}
                   disabled={project.bars.length >= limits.maxBars}
                   onClick={() => {
                     edit((p) => ({
@@ -951,7 +1006,9 @@ function App({ user, onLogout, demo }) {
                   }}
                 >
                   {" "}
-                  {t("＋ Přidat takt")}{" "}
+                  <ActionLabel icon="plus">
+                    {t("＋ Přidat takt")}
+                  </ActionLabel>{" "}
                 </button>
               </div>
             </section>
@@ -961,7 +1018,8 @@ function App({ user, onLogout, demo }) {
                   <span className="eyebrow">{t("EDITOR TAKTU")}</span>
                   <h2>
                     {" "}
-                    {t("Takt")} {String(selected + 1).padStart(2, "0")}{" "}
+                    {!compact && t("Takt")}{" "}
+                    {String(selected + 1).padStart(2, "0")}{" "}
                     <span>
                       {current.numerator}/{current.denominator}
                     </span>
@@ -986,9 +1044,12 @@ function App({ user, onLogout, demo }) {
                     }}
                   >
                     {" "}
-                    {t("⧉ Duplikovat")}{" "}
+                    <ActionLabel icon="copy">
+                      {t("⧉ Duplikovat")}
+                    </ActionLabel>{" "}
                   </button>
                   <button
+                    title={t("Smazat takt")}
                     disabled={project.bars.length === 1}
                     onClick={() =>
                       setConfirm({
@@ -1004,7 +1065,9 @@ function App({ user, onLogout, demo }) {
                     }
                   >
                     {" "}
-                    {t("Smazat takt")}{" "}
+                    <ActionLabel icon="trash">
+                      {t("Smazat takt")}
+                    </ActionLabel>{" "}
                   </button>
                 </div>
               </div>
@@ -1012,10 +1075,17 @@ function App({ user, onLogout, demo }) {
                 <div
                   className="grid-content"
                   style={{
-                    minWidth: Math.max(
-                      760,
-                      ...current.rows.map((r) => r.steps.length * 24 + 340),
-                    ),
+                    minWidth: compact
+                      ? Math.max(
+                          8,
+                          ...current.rows.map((r) => r.steps.length),
+                        ) *
+                          28 +
+                        160
+                      : Math.max(
+                          760,
+                          ...current.rows.map((r) => r.steps.length * 24 + 340),
+                        ),
                   }}
                 >
                   <div className="grid-labels">
@@ -1042,22 +1112,14 @@ function App({ user, onLogout, demo }) {
                         >
                           ◉
                         </button>
-                        <select
-                          aria-label={t("Nástroj řádku {0}", ri + 1)}
+                        <InstrumentPicker
+                          compact={compact}
                           value={r.instrument}
-                          onChange={(e) =>
-                            editRow(r.id, (x) => ({
-                              ...x,
-                              instrument: e.target.value,
-                            }))
+                          row={ri + 1}
+                          onChange={(instrument) =>
+                            editRow(r.id, (x) => ({ ...x, instrument }))
                           }
-                        >
-                          {instruments.map((i) => (
-                            <option value={i.id} key={i.id}>
-                              {i.name}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </div>
                       <DivisionPicker
                         row={ri + 1}
@@ -1132,7 +1194,7 @@ function App({ user, onLogout, demo }) {
                             editRow(r.id, (x) => ({ ...x, muted: !x.muted }))
                           }
                         >
-                          M
+                          <TransportIcon name="mute" />
                         </button>
                         <button
                           aria-label={t("Odstranit řádek {0}", ri + 1)}
@@ -1153,13 +1215,16 @@ function App({ user, onLogout, demo }) {
               </div>
               <button
                 className="add-row"
+                title={t("＋ Přidat nástroj")}
                 disabled={current.rows.length >= 32}
                 onClick={() =>
                   editBar((b) => ({ ...b, rows: [...b.rows, row("kick")] }))
                 }
               >
                 {" "}
-                {t("＋ Přidat nástroj")}{" "}
+                <ActionLabel icon="plus">
+                  {t("＋ Přidat nástroj")}
+                </ActionLabel>{" "}
                 <span>{t("Vlastní dělení, vlastní rytmus")}</span>
               </button>
               <div className="editor-footer">

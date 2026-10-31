@@ -174,7 +174,7 @@ try {
     session_regenerate_id(true);
     $_SESSION = [
         "user_id" => (int) $id,
-        "expires" => time() + 7 * 86400,
+        "expires" => time() + BEATS_SESSION_IDLE_SECONDS,
         "csrf" => bin2hex(random_bytes(32)),
         "nonce" => bin2hex(random_bytes(32)),
     ];

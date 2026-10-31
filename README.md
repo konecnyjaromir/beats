@@ -57,6 +57,8 @@ Open [localhost:8080](http://localhost:8080). The browser displays its native Ba
 
 On Windows, `./start.ps1` builds and serves the application. It uses `.runtime/php/php.exe` when available, otherwise PHP from `PATH`. The portable runtime is a local convenience and is not included in this repository.
 
+Google sign-in lasts for 30 days of inactivity and survives closing the browser. Authenticated requests renew this period; signing out ends the session immediately. See [deployment instructions](DEPLOYMENT.md#sign-in-lifetime) for session storage and upgrade details.
+
 ## Language configuration
 
 **English is the default.** There is no language switch in the interface. Set the language in `beats-config.php`:
@@ -106,6 +108,8 @@ Import remains JSON/ZIP only. Keep JSON when you need an editable backup.
 **Repeat loop** is on by default. Turning it off during playback finishes the current loop pass without starting another; it can also be turned back on before playback ends. **Play bar** plays the currently selected bar once, independent of the repeat setting. Natural completion lets the final sample decay; the Stop button cancels playback immediately.
 
 The four transport controls share a two-by-two button layout. Repeat and USB warm-up are toggle buttons; enabling warm-up still opens its confirmation dialog. **Add bar** inherits the final bar's meter, instrument order, subdivisions and mute settings with empty hits. **Duplicate** also copies the hits. Drag a bar card before or after another card to reorder the arrangement, or focus it and press Alt + Left/Right. Reordering stops playback and preserves the selected bar and all its content.
+
+**Compact view**, next to Sign out, is a manual toggle for phones, tablets and desktop screens. It is remembered in the browser. It collapses the sidebar, replaces editor actions with icons and removes instructional text. Bar tabs show only their numbers. Instrument pickers show icons in compact mode and icons with names in regular mode; all icon controls retain accessible names. Dense grids scroll horizontally while instrument, subdivision and row-action controls remain pinned. Dialogs keep their explanatory text and confirmations. The redundant loop-status indicator is removed in both modes.
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for the single-directory hosting layout, permissions, safe updates and backups.
 

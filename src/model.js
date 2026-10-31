@@ -35,6 +35,24 @@ export const bar = (numerator = 4, denominator = 4) => ({
   denominator,
   rows: [row("kick"), row("snare"), row("hat")],
 });
+export const emptyBarLike = (previous) => ({
+  id: uid(),
+  numerator: previous.numerator,
+  denominator: previous.denominator,
+  rows: previous.rows.map((r) => ({
+    ...row(r.instrument, r.steps.length),
+    muted: r.muted,
+  })),
+});
+export function reorderBars(bars, sourceId, targetId, after = false) {
+  const source = bars.findIndex((b) => b.id === sourceId);
+  const target = bars.findIndex((b) => b.id === targetId);
+  if (source < 0 || target < 0 || source === target) return bars;
+  const result = [...bars];
+  const [moved] = result.splice(source, 1);
+  result.splice(target + (after ? 1 : 0) - (source < target ? 1 : 0), 0, moved);
+  return result;
+}
 export function initial() {
   const b = bar();
   return {

@@ -84,7 +84,7 @@ export function ExportDialog({ project }) {
                 "pdf",
                 "PDF",
                 t(
-                  "Bubenické noty. Každý nástroj má vlastní linku včetně triol a dalších dělení.",
+                  "Bubenický zápis ve společné osnově včetně triol a dalších dělení.",
                 ),
               ],
             ].map(([value, label, description]) => (

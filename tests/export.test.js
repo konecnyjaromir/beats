@@ -1,7 +1,28 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { midiBytes, gmDrums } from "../src/midiExport.js";
-import { notationTiming } from "../src/notation.js";
+import { notationTiming, notationVoices } from "../src/notation.js";
+test("Shared staff merges matching grids into chords without losing independent rhythms", () => {
+  const voices = notationVoices([
+    { instrument: "kick", steps: [3, 0, 0, 0] },
+    { instrument: "snare", steps: [1, 0, 2, 0] },
+    { instrument: "ride", steps: [2, 2, 2] },
+    { instrument: "hat", steps: [2, 2, 2, 2] },
+    { instrument: "crash", steps: [3], muted: true },
+    { instrument: "tomHigh", steps: [0, 0] },
+  ]);
+  assert.deepEqual(
+    voices.map((v) => v.steps.length),
+    [4, 3, 4],
+  );
+  assert.deepEqual(
+    voices[0].steps[0].map((h) => [h.instrument, h.level]),
+    [
+      ["kick", 3],
+      ["snare", 1],
+    ],
+  );
+});
 
 function parse(bytes) {
   const view = new DataView(bytes.buffer);

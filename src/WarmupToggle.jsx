@@ -1,5 +1,6 @@
 import React, { useId, useRef } from "react";
 import { t } from "./i18n.js";
+import { TransportIcon } from "./TransportIcon.jsx";
 
 export function WarmupToggle({ checked, disabled, onChange }) {
   const dialog = useRef(null);
@@ -7,19 +8,23 @@ export function WarmupToggle({ checked, disabled, onChange }) {
   const descriptionId = useId();
   return (
     <>
-      <label className="adapter-warmup">
-        <input
-          type="checkbox"
-          checked={checked}
-          disabled={disabled}
-          aria-haspopup="dialog"
-          onChange={(event) => {
-            if (event.target.checked) dialog.current.showModal();
-            else onChange(false);
-          }}
-        />
-        {t("Zahřátí USB adaptéru")}
-      </label>
+      <button
+        type="button"
+        className="transport-button transport-toggle"
+        aria-pressed={checked}
+        disabled={disabled}
+        aria-haspopup="dialog"
+        onClick={() => {
+          if (!checked) dialog.current.showModal();
+          else onChange(false);
+        }}
+      >
+        <TransportIcon name="warmup" />
+        <span>{t("Zahřátí USB adaptéru")}</span>
+        <span className="transport-state" aria-hidden="true">
+          {checked ? "✓" : ""}
+        </span>
+      </button>
       <dialog
         ref={dialog}
         className="division-dialog"

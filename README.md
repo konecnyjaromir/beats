@@ -99,11 +99,13 @@ The editor's **Export** button opens a format dialog, also available in demo mod
 
 - **JSON** preserves the original editable format, including muted rows.
 - **MIDI** creates a type-1 Standard MIDI File with General MIDI percussion on channel 10, tempo, meter changes and three velocity levels (40, 85, 120). Muted rows are omitted. Timing uses 960 ticks per quarter note; uncommon subdivisions are rounded to the nearest tick. MIDI contains notes, not the bundled audio samples, so sound depends on the receiving instrument.
-- **PDF** creates a landscape percussion score with a separate named staff for each active instrument row. Independent subdivisions use tuplets, soft hits use parentheses and strong hits use accents. Note/rest lengths represent grid slots. Large scores continue over multiple pages; dense bars are scaled to fit. Muted rows are omitted. This is a separated percussion score rather than a condensed drum-kit transcription. PDF libraries are loaded only when selected; generation stays in the browser.
+- **PDF** creates a landscape percussion score with all instruments on a shared five-line drum staff. Independent subdivisions use tuplets, soft hits use parentheses and strong hits use accents. Note/rest lengths represent grid slots. Large scores continue over multiple pages; dense bars are scaled to fit. Muted rows are omitted. Instrument positions and noteheads are explained in an included legend. Rows sharing the same subdivision and stem direction are combined into chords; other subdivisions remain independent voices on the same staff. Silent rows are omitted. PDF libraries are loaded only when selected; generation stays in the browser.
 
 Import remains JSON/ZIP only. Keep JSON when you need an editable backup.
 
 **Repeat loop** is on by default. Turning it off during playback finishes the current loop pass without starting another; it can also be turned back on before playback ends. **Play bar** plays the currently selected bar once, independent of the repeat setting. Natural completion lets the final sample decay; the Stop button cancels playback immediately.
+
+The four transport controls share a two-by-two button layout. Repeat and USB warm-up are toggle buttons; enabling warm-up still opens its confirmation dialog. **Add bar** inherits the final bar's meter, instrument order, subdivisions and mute settings with empty hits. **Duplicate** also copies the hits. Drag a bar card before or after another card to reorder the arrangement, or focus it and press Alt + Left/Right. Reordering stops playback and preserves the selected bar and all its content.
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for the single-directory hosting layout, permissions, safe updates and backups.
 

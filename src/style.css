@@ -480,6 +480,7 @@ header {
 }
 .transport {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 25px;
   padding: 21px 23px;
@@ -487,43 +488,83 @@ header {
   background: #202328;
   border-radius: 12px;
 }
+/* One shared visual language for all four transport controls. */
 .play-controls {
-  flex: 0 0 175px;
+  flex: 0 0 340px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
-.play-controls .play {
+.play-controls .transport-button {
+  min-width: 0;
   width: 100%;
-}
-.adapter-warmup {
+  height: 52px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
-  gap: 7px;
-  margin-top: 12px;
+  gap: 9px;
+  border: 1px solid #444a50;
+  border-radius: 9px;
+  background: #292e33;
+  color: #dce2e6;
   font-size: 11px;
-  color: #c3c9ce;
-  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
-.adapter-warmup input {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: #c5ed82;
+.transport-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
 }
-.play {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
+.play-controls .transport-button:hover:not(:disabled) {
+  background: #343b40;
+  border-color: #728078;
+}
+.play-controls .transport-button:focus-visible {
+  outline: 2px solid #c5ed82;
+  outline-offset: 3px;
+}
+.play-controls .transport-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.play-controls .transport-play {
   background: #c5ed82;
+  border-color: #c5ed82;
   color: #243019;
-  border: 0;
-  min-width: 120px;
-  padding: 17px 18px;
 }
-.play:hover {
+.play-controls .transport-play:hover:not(:disabled) {
   background: #d5f4a5;
+  border-color: #d5f4a5;
 }
-.play.active {
+.play-controls .transport-play.active {
   background: #e9b875;
+  border-color: #e9b875;
+}
+.play-controls .transport-toggle[aria-pressed="true"] {
+  background: #303c28;
+  border-color: #91b45f;
+  color: #d0eea5;
+}
+.transport-state {
+  margin-left: auto;
+  width: 12px;
+  flex: 0 0 12px;
+  font-size: 13px;
+}
+@media (max-width: 700px) {
+  .play-controls {
+    flex-basis: 100%;
+  }
+}
+@media (max-width: 1400px) {
+  .transport .loop-indicator {
+    display: none;
+  }
 }
 .control {
   border-left: 1px solid #393c42;
@@ -697,6 +738,29 @@ header {
   gap: 9px;
   overflow: auto;
   padding-bottom: 5px;
+}
+.bar-tab {
+  position: relative;
+}
+.bar-tab[draggable="true"] {
+  cursor: grab;
+}
+.bar-tab[draggable="true"]:active {
+  cursor: grabbing;
+}
+.bar-grip {
+  position: absolute;
+  right: 8px;
+  top: 7px;
+  font-size: 16px;
+  font-style: normal;
+  color: #80908a;
+}
+.bar-tab.drop-before {
+  box-shadow: inset 4px 0 #c5ed82;
+}
+.bar-tab.drop-after {
+  box-shadow: inset -4px 0 #c5ed82;
 }
 .bar-tab {
   min-width: 135px;
@@ -1194,11 +1258,6 @@ footer {
   .transport {
     flex-wrap: wrap;
     gap: 16px;
-  }
-  .play {
-    min-width: 100px;
-    font-size: 12px;
-    padding: 16px 12px;
   }
   .tempo-trigger {
     font-size: 21px;

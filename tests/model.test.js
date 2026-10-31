@@ -6,7 +6,56 @@ import {
   normalizeProject,
   timelineFor,
   positionAt,
+  emptyBarLike,
+  reorderBars,
 } from "../src/model.js";
+test("Bar reordering preserves data and supports insertion in either direction", () => {
+  const bars = [{ id: "a" }, { id: "b" }, { id: "c" }, { id: "d" }];
+  assert.deepEqual(
+    reorderBars(bars, "a", "c", true).map((b) => b.id),
+    ["b", "c", "a", "d"],
+  );
+  assert.deepEqual(
+    reorderBars(bars, "d", "b").map((b) => b.id),
+    ["a", "d", "b", "c"],
+  );
+  assert.deepEqual(
+    reorderBars(bars, "b", "c").map((b) => b.id),
+    ["a", "b", "c", "d"],
+  );
+  assert.equal(reorderBars(bars, "x", "c"), bars);
+  assert.equal(reorderBars(bars, "a", "a"), bars);
+  assert.equal(reorderBars(bars, "a", "d", true)[3], bars[0]);
+  assert.deepEqual(
+    bars.map((b) => b.id),
+    ["a", "b", "c", "d"],
+  );
+});
+test("Added bars inherit the previous layout with fresh IDs and empty hits", () => {
+  const previous = {
+    id: "bar",
+    numerator: 7,
+    denominator: 8,
+    rows: [
+      { id: "a", instrument: "ride", muted: true, steps: [1, 2, 3] },
+      { id: "b", instrument: "tomHigh", muted: false, steps: [3, 0, 0, 2, 1] },
+    ],
+  };
+  const next = emptyBarLike(previous);
+  assert.equal(next.numerator, 7);
+  assert.equal(next.denominator, 8);
+  assert.notEqual(next.id, previous.id);
+  assert.deepEqual(
+    next.rows.map((r) => [r.instrument, r.muted, r.steps]),
+    [
+      ["ride", true, [0, 0, 0]],
+      ["tomHigh", false, [0, 0, 0, 0, 0]],
+    ],
+  );
+  next.rows[0].steps[0] = 3;
+  assert.equal(previous.rows[0].steps[0], 1);
+  assert.notEqual(next.rows[0].id, previous.rows[0].id);
+});
 test("Legacy loops inherit the global meter without changing hits", () => {
   const old = {
     bpm: 120,

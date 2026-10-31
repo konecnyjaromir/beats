@@ -8,11 +8,12 @@ import {
   Beam,
   Parenthesis,
   Articulation,
+  Annotation,
 } from "vexflow";
 import { jsPDF } from "jspdf";
 import "svg2pdf.js";
 import { instruments } from "./model.js";
-import { notationTiming } from "./notation.js";
+import { notationTiming, notationVoices, drumNotation } from "./notation.js";
 import { t } from "./i18n.js";
 
 export async function pdfBytes(project, progress = () => {}) {
@@ -55,101 +56,170 @@ export async function pdfBytes(project, progress = () => {}) {
       const bar = project.bars[index],
         n = bar.numerator ?? project.numerator,
         d = bar.denominator ?? project.denominator;
-      const rows = bar.rows.filter((r) => !r.muted);
-      if (!rows.length) {
-        if (y > 490) newPage();
-        pdf.text(
-          `${t("Takt")} ${index + 1} · ${n}/${d} · ${t("Ticho")}`,
-          36,
-          y,
-        );
-        y += 35;
-      }
-      for (let first = 0; first < rows.length; first += 4) {
-        const group = rows.slice(first, first + 4);
-        if (y + group.length * 102 + 30 > 550) newPage();
-        pdf.setFontSize(10);
-        pdf.text(
-          `${t("Takt")} ${index + 1} · ${n}/${d}${first ? " · " + t("pokračování") : ""}`,
-          36,
-          y,
-        );
-        y += 8;
-        host.replaceChildren();
-        const voices = [],
-          notations = [];
-        for (const row of group) {
-          const timing = notationTiming(n, d, row.steps.length);
-          const notes = row.steps.map((level) => {
-            const cross = /hat|ride|crash|splash|Hat|Bell/.test(row.instrument);
-            const note = new StaveNote({
-              keys: [level ? (cross ? "b/4/x2" : "b/4") : "b/4"],
-              duration: String(timing.base) + (level ? "" : "r"),
-              clef: "percussion",
-            });
-            if (level === 1) Parenthesis.buildAndAttach([note]);
-            if (level === 3)
-              note.addModifier(new Articulation("a>").setPosition(3), 0);
-            return note;
+      const groups = notationVoices(bar.rows);
+      host.replaceChildren();
+      const voices = [],
+        notations = [];
+      let above = 0,
+        below = 0;
+      const lanes = { 1: 0, "-1": 0 };
+      // A wholly silent bar still gets a visible rest voice.
+      if (!groups.length) groups.push({ stem: 1, steps: [[]] });
+      for (const group of groups) {
+        const lane = lanes[group.stem]++;
+        const timing = notationTiming(n, d, group.steps.length);
+        const notes = group.steps.map((hits) => {
+          const note = new StaveNote({
+            keys: hits.length
+              ? hits.map((hit) => hit.key)
+              : [group.stem === 1 ? "g/5" : "d/4"],
+            duration: String(timing.base) + (hits.length ? "" : "r"),
+            clef: "percussion",
+            stem_direction: group.stem,
           });
-          const tuplets = [];
-          if (timing.count !== timing.occupied)
-            for (let i = 0; i < notes.length; i += timing.count)
-              tuplets.push(
-                new Tuplet(notes.slice(i, i + timing.count), {
-                  num_notes: timing.count,
-                  notes_occupied: timing.occupied,
-                  ratioed: timing.occupied !== 2,
-                  bracketed: true,
-                }),
+          note.setStemLength(35 + lane * 28);
+          hits.forEach((hit, keyIndex) => {
+            if (hit.level === 1) {
+              note.addModifier(new Parenthesis(1), keyIndex);
+              note.addModifier(new Parenthesis(2), keyIndex);
+            }
+            if (hit.open)
+              note.addModifier(
+                new Articulation("a@a").setPosition(3),
+                keyIndex,
               );
-          const voice = new Voice({ num_beats: n, beat_value: d })
-            .setMode(Voice.Mode.SOFT)
-            .addTickables(notes);
-          voices.push(voice);
-          notations.push({ notes, tuplets });
+            if (hit.edge || hit.bell)
+              note.addModifier(
+                new Annotation(hit.edge ? "E" : "B")
+                  .setFont("Arial", 9)
+                  .setVerticalJustification(1),
+                keyIndex,
+              );
+          });
+          if (hits.some((hit) => hit.level === 3))
+            note.addModifier(
+              new Articulation("a>").setPosition(group.stem === 1 ? 3 : 4),
+              0,
+            );
+          return note;
+        });
+        const tuplets = [];
+        if (timing.count !== timing.occupied) {
+          const offset = group.stem === 1 ? above++ : below++;
+          for (let i = 0; i < notes.length; i += timing.count)
+            tuplets.push(
+              new Tuplet(notes.slice(i, i + timing.count), {
+                num_notes: timing.count,
+                notes_occupied: timing.occupied,
+                ratioed: timing.occupied !== 2,
+                bracketed: true,
+                location: group.stem,
+                y_offset: group.stem * -offset * 20,
+              }),
+            );
         }
-        const formatter = new Formatter();
-        voices.forEach((v) => formatter.joinVoices([v]));
-        const width = Math.max(
-          1100,
-          formatter.preCalculateMinTotalWidth(voices) + 180,
+        voices.push(
+          new Voice({ num_beats: n, beat_value: d })
+            .setMode(Voice.Mode.SOFT)
+            .addTickables(notes),
         );
-        const renderer = new Renderer(host, Renderer.Backends.SVG);
-        renderer.resize(width, group.length * 150);
-        const context = renderer.getContext();
-        const staves = group.map((row, i) =>
-          new Stave(10, i * 150 + 25, width - 20, { num_lines: 5 })
-            .addClef("percussion")
-            .setContext(context)
-            .draw(),
-        );
-        formatter.format(voices, width - 140);
-        voices.forEach((voice, i) => {
-          const beams = Beam.generateBeams(notations[i].notes);
-          voice.draw(context, staves[i]);
-          beams.forEach((b) => b.setContext(context).draw());
-          notations[i].tuplets.forEach((tuplet) =>
-            tuplet.setContext(context).draw(),
-          );
-        });
-        const svg = host.querySelector("svg");
-        const scale = 740 / width,
-          height = group.length * 150 * scale;
-        group.forEach((row, i) => {
-          pdf.setFontSize(9);
-          pdf.text(
-            instruments.find((inst) => inst.id === row.instrument)?.name ??
-              row.instrument,
-            36,
-            y + i * 150 * scale + 7,
-          );
-        });
-        await pdf.svg(svg, { x: 36, y: y + 8, width: 740, height });
-        y += height + 25;
+        notations.push({ notes, tuplets, stem: group.stem });
       }
+      const formatter = new Formatter().joinVoices(voices);
+      const width = Math.max(
+        1100,
+        formatter.preCalculateMinTotalWidth(voices) + 220,
+      );
+      const svgHeight = 260 + Math.max(above, below) * 22;
+      const renderer = new Renderer(host, Renderer.Backends.SVG);
+      renderer.resize(width, svgHeight);
+      const context = renderer.getContext();
+      const stave = new Stave(10, 80 + above * 18, width - 20)
+        .addClef("percussion")
+        .addTimeSignature(`${n}/${d}`)
+        .setContext(context)
+        .draw();
+      formatter.format(voices, width - 190);
+      voices.forEach((voice, i) => {
+        const beams = Beam.generateBeams(notations[i].notes, {
+          stem_direction: notations[i].stem,
+        });
+        voice.draw(context, stave);
+        beams.forEach((beam) => beam.setContext(context).draw());
+        notations[i].tuplets.forEach((tuplet) =>
+          tuplet.setContext(context).draw(),
+        );
+      });
+      const height = (svgHeight * 740) / width;
+      if (y + height + 24 > 550) newPage();
+      pdf.setFontSize(10);
+      pdf.text(`${t("Takt")} ${index + 1} · ${n}/${d}`, 36, y);
+      y += 6;
+      await pdf.svg(host.querySelector("svg"), {
+        x: 36,
+        y,
+        width: 740,
+        height,
+      });
+      y += height + 18;
       progress(index + 1, project.bars.length);
       await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+    newPage();
+    pdf.setFontSize(12);
+    pdf.text(t("Legenda nástrojů"), 36, y);
+    y += 20;
+    const used = instruments.filter((inst) =>
+      project.bars.some((bar) =>
+        bar.rows.some(
+          (row) =>
+            !row.muted && row.instrument === inst.id && row.steps.some(Boolean),
+        ),
+      ),
+    );
+    for (let first = 0; first < used.length; first += 6) {
+      const group = used.slice(first, first + 6);
+      if (y + 130 > 550) newPage();
+      host.replaceChildren();
+      const renderer = new Renderer(host, Renderer.Backends.SVG);
+      renderer.resize(1100, 150);
+      const context = renderer.getContext();
+      for (let i = 0; i < group.length; i++) {
+        const symbol = drumNotation[group[i].id];
+        const stave = new Stave(i * 180, 30, 160)
+          .addClef("percussion")
+          .setContext(context)
+          .draw();
+        const note = new StaveNote({
+          keys: [symbol.key],
+          duration: "4",
+          clef: "percussion",
+          stem_direction: symbol.stem,
+        });
+        if (symbol.open)
+          note.addModifier(new Articulation("a@a").setPosition(3), 0);
+        if (symbol.edge || symbol.bell)
+          note.addModifier(
+            new Annotation(symbol.edge ? "E" : "B")
+              .setFont("Arial", 9)
+              .setVerticalJustification(1),
+            0,
+          );
+        Formatter.FormatAndDraw(context, stave, [note]);
+        pdf.setFontSize(8);
+        pdf.text(
+          pdf.splitTextToSize(group[i].name, 110),
+          36 + (i * 180 * 740) / 1100,
+          y + 108,
+        );
+      }
+      await pdf.svg(host.querySelector("svg"), {
+        x: 36,
+        y,
+        width: 740,
+        height: (150 * 740) / 1100,
+      });
+      y += 140;
     }
     return pdf.output("arraybuffer");
   } finally {

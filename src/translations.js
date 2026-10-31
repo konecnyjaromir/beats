@@ -1,5 +1,8 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Přesuň takt tažením. Klávesnicí: Alt + šipka vlevo nebo vpravo.":
+    "Drag to move this bar. Keyboard: Alt + Left or Right arrow.",
+  "Legenda nástrojů": "Instrument legend",
   "Přehrát takt": "Play bar",
   "Opakovat smyčku": "Repeat loop",
   "JEDEN TAKT": "SINGLE BAR",
@@ -11,8 +14,8 @@ export const english = {
     "Original format for backups and re-importing into BEATS.",
   "Pro hudební programy. General MIDI bicí, tempo a síla úderů.":
     "For music software. General MIDI drums, tempo and hit velocities.",
-  "Bubenické noty. Každý nástroj má vlastní linku včetně triol a dalších dělení.":
-    "Percussion notation. Each instrument has its own staff, including triplets and other subdivisions.",
+  "Bubenický zápis ve společné osnově včetně triol a dalších dělení.":
+    "Drum notation on a shared staff, including triplets and other subdivisions.",
   "MIDI a PDF vynechávají ztlumené řádky. JSON uchová vše. MIDI neobsahuje zvukové samply.":
     "MIDI and PDF omit muted rows. JSON preserves everything. MIDI does not contain audio samples.",
   "Připravuji export…": "Preparing export…",

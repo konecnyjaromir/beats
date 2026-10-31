@@ -1,8 +1,18 @@
 import { ExportDialog } from "./ExportDialog.jsx";
+import { TransportIcon } from "./TransportIcon.jsx";
 import { t, language } from "./i18n.js";
 import React, { useState, useRef, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { initial, bar, row, uid, instruments, normalizeProject } from "./model";
+import {
+  initial,
+  bar,
+  emptyBarLike,
+  reorderBars,
+  row,
+  uid,
+  instruments,
+  normalizeProject,
+} from "./model";
 import { DrumEngine } from "./audio";
 import { TempoInput } from "./TempoInput";
 import { DivisionPicker } from "./DivisionPicker";
@@ -67,6 +77,8 @@ function App({ user, onLogout, demo }) {
   });
   const [search, setSearch] = useState("");
   const importInput = useRef(null);
+  const draggedBar = useRef(null);
+  const [dropTarget, setDropTarget] = useState(null);
   const [transferBusy, setTransferBusy] = useState(false);
   const [adapterWarmup, setAdapterWarmup] = useState(() => {
     try {
@@ -160,6 +172,13 @@ function App({ user, onLogout, demo }) {
       ...p,
       bars: p.bars.map((b, i) => (i === selected ? fn(b) : b)),
     }));
+  }
+  function moveBar(sourceId, targetId, after) {
+    const selectedId = project.bars[selected].id;
+    const bars = reorderBars(project.bars, sourceId, targetId, after);
+    if (bars.every((b, i) => b === project.bars[i])) return;
+    edit({ bars });
+    setSelected(bars.findIndex((b) => b.id === selectedId));
   }
   function editRow(id, fn) {
     editBar((b) => ({
@@ -678,33 +697,43 @@ function App({ user, onLogout, demo }) {
             <section className="transport">
               <div className="play-controls">
                 <button
-                  className={"play " + (playing ? "active" : "")}
+                  className={
+                    "transport-button transport-play " +
+                    (playing ? "active" : "")
+                  }
                   disabled={loading}
                   onClick={() => play()}
                 >
-                  {loading ? "…" : playing ? "■" : "▶"}{" "}
+                  <TransportIcon
+                    name={loading ? "loading" : playing ? "stop" : "play"}
+                  />
                   <span>{playing ? t("Zastavit") : t("Přehrát")}</span>
                 </button>
                 <button
                   type="button"
+                  className="transport-button"
                   disabled={loading || playing}
                   onClick={() => play(true)}
                 >
-                  ▶ {t("Přehrát takt")}
+                  <TransportIcon name="bar" />
+                  <span>{t("Přehrát takt")}</span>
                 </button>
-                <label className="repeat-toggle">
-                  <input
-                    type="checkbox"
-                    role="switch"
-                    checked={repeat}
-                    disabled={loading || (playing && playingBar)}
-                    onChange={(e) => {
-                      setRepeat(e.target.checked);
-                      engine.setRepeating(e.target.checked);
-                    }}
-                  />
+                <button
+                  type="button"
+                  className="transport-button transport-toggle"
+                  aria-pressed={repeat}
+                  disabled={loading || (playing && playingBar)}
+                  onClick={() => {
+                    setRepeat(!repeat);
+                    engine.setRepeating(!repeat);
+                  }}
+                >
+                  <TransportIcon name="repeat" />
                   <span>{t("Opakovat smyčku")}</span>
-                </label>
+                  <span className="transport-state" aria-hidden="true">
+                    {repeat ? "✓" : ""}
+                  </span>
+                </button>
                 <WarmupToggle
                   checked={adapterWarmup}
                   disabled={playing || loading}
@@ -813,15 +842,69 @@ function App({ user, onLogout, demo }) {
                 {project.bars.map((b, i) => (
                   <button
                     key={b.id}
+                    draggable={project.bars.length > 1}
+                    title={t(
+                      "Přesuň takt tažením. Klávesnicí: Alt + šipka vlevo nebo vpravo.",
+                    )}
+                    onDragStart={(e) => {
+                      stop();
+                      draggedBar.current = b.id;
+                      e.dataTransfer.effectAllowed = "move";
+                      e.dataTransfer.setData("text/plain", b.id);
+                    }}
+                    onDragOver={(e) => {
+                      if (!draggedBar.current) return;
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setDropTarget({
+                        id: b.id,
+                        after: e.clientX > rect.left + rect.width / 2,
+                      });
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      moveBar(
+                        draggedBar.current,
+                        b.id,
+                        e.clientX > rect.left + rect.width / 2,
+                      );
+                      draggedBar.current = null;
+                      setDropTarget(null);
+                    }}
+                    onDragEnd={() => {
+                      draggedBar.current = null;
+                      setDropTarget(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (
+                        !e.altKey ||
+                        !["ArrowLeft", "ArrowRight"].includes(e.key)
+                      )
+                        return;
+                      e.preventDefault();
+                      const target = i + (e.key === "ArrowRight" ? 1 : -1);
+                      if (project.bars[target])
+                        moveBar(b.id, project.bars[target].id, target > i);
+                    }}
                     className={
                       "bar-tab " +
+                      (dropTarget?.id === b.id
+                        ? dropTarget.after
+                          ? "drop-after "
+                          : "drop-before "
+                        : "") +
                       (i === selected ? "selected " : "") +
                       (playing && position.bar === i ? "sounding" : "")
                     }
                     onClick={() => setSelected(i)}
                   >
-                    <span>{String(i + 1).padStart(2, "0")}</span> {t("Takt")}{" "}
-                    {i + 1}
+                    <span>{String(i + 1).padStart(2, "0")}</span>
+                    <i className="bar-grip" aria-hidden="true">
+                      ⠿
+                    </i>{" "}
+                    {t("Takt")} {i + 1}
                     <small>
                       {b.numerator}/{b.denominator} · {b.rows.length}{" "}
                       {t("řádky")}{" "}
@@ -836,7 +919,7 @@ function App({ user, onLogout, demo }) {
                       ...p,
                       bars: [
                         ...p.bars,
-                        bar(current.numerator, current.denominator),
+                        emptyBarLike(p.bars[p.bars.length - 1]),
                       ],
                     }));
                     setSelected(project.bars.length);

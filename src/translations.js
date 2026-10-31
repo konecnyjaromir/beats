@@ -1,5 +1,8 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  Vypnout: "Disable",
+  Zapnout: "Enable",
+  Použít: "Apply",
   Trénování: "Training",
   "Počáteční tempo": "Starting tempo",
   "Koncové tempo": "Ending tempo",

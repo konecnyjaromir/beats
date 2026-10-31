@@ -1383,15 +1383,33 @@ footer {
   margin: 14px 0 0;
 }
 .training-buttons {
-  flex-wrap: wrap;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.training-buttons button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 4px;
+  white-space: nowrap;
 }
 .compact .training-dialog h3 {
-  position: static;
-  width: auto;
-  height: auto;
-  clip-path: none;
-  overflow: visible;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
 }
 .compact .training-dialog p {
-  display: block;
+  display: none;
+}
+.compact .training-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.training-dialog .action-icon svg {
+  width: 22px;
+  height: 22px;
 }

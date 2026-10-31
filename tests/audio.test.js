@@ -214,6 +214,38 @@ test("Playback schedules the first hit immediately, with gapless repeats and can
   schedule();
   assert.equal(ended, 2);
 
+  engine.ctx.currentTime = 40;
+  const tempos = [];
+  engine.start(project, () => {}, {
+    training: { start: 120, end: 130, step: 6, repeats: 2 },
+    onTempo: (bpm) => tempos.push(bpm),
+    onEnded: () => ended++,
+  });
+  const expected = [120, 120, 126, 126, 130, 130];
+  let offset = 0;
+  const sourceIndex = sources.length - 1;
+  for (let i = 0; i < expected.length; i++) {
+    engine.ctx.currentTime = 40.08 + offset;
+    schedule();
+    draw();
+    assert.equal(tempos.at(-1), expected[i]);
+    assert.ok(
+      Math.abs(sources[sourceIndex + i].startedAt - (40.08 + offset)) < 1e-8,
+    );
+    offset += 240 / expected[i];
+  }
+  engine.ctx.currentTime = 40.08 + offset + 0.001;
+  schedule();
+  draw();
+  assert.equal(ended, 2, "Training keeps playing at the final tempo");
+  assert.equal(tempos.at(-1), 130);
+  assert.equal(sources.length, sourceIndex + 7);
+  assert.ok(
+    Math.abs(sources.at(-1).startedAt - engine.ctx.currentTime) < 0.002,
+  );
+  assert.equal(engine.active, true);
+  engine.stop();
+  assert.equal(engine.active, false);
 });
 
 test("Preparation starts silent audio in the gesture and waits for rendering, not merely resume", async () => {

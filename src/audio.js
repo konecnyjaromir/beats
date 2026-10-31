@@ -1,4 +1,5 @@
 import { t } from "./i18n.js";
+import { trainingCycles } from "./training.js";
 import { instruments, timelineFor, positionAt, eventsForBar } from "./model.js";
 export class DrumEngine {
   buffers = new Map();
@@ -135,18 +136,29 @@ export class DrumEngine {
   start(
     project,
     onPosition,
-    { warmup = false, repeat = true, onEnded = () => {} } = {},
+    {
+      warmup = false,
+      repeat = true,
+      training = null,
+      onTempo = () => {},
+      onEnded = () => {},
+    } = {},
   ) {
     this.stop();
     this.active = true;
     this.project = structuredClone(project);
     this.timeline = timelineFor(project);
+    this.training = training ? trainingCycles(project, training) : null;
     // Shift the entire timeline so the first hit and playhead remain aligned.
     // prepare() has already verified that the audio renderer is processing.
     const now = this.ctx.currentTime;
     if (warmup) this.hit("rim", 1, now + 0.01);
     this.startTime = now + (warmup ? 0.5 : 0.08);
-    this.endTime = repeat ? Infinity : this.startTime + this.timeline.total;
+    this.endTime = this.training
+      ? Infinity
+      : repeat
+        ? Infinity
+        : this.startTime + this.timeline.total;
     this.nextBar = 0;
     this.nextTime = this.startTime;
     this.queue = [];
@@ -168,7 +180,12 @@ export class DrumEngine {
       ) {
         const index = this.nextBar % project.bars.length;
         const at = this.nextTime;
-        const duration = this.timeline.bars[index].duration;
+        const cycle =
+          this.training?.cycles[
+            Math.floor(this.nextBar / project.bars.length)
+          ] ?? this.training?.cycles.at(-1);
+        const duration = (cycle?.timeline || this.timeline).bars[index]
+          .duration;
         this.queue.push(
           ...eventsForBar(project.bars[index], duration).map((e) => ({
             ...e,
@@ -193,7 +210,13 @@ export class DrumEngine {
     const draw = () => {
       if (!this.active) return;
       const elapsed = Math.max(0, this.ctx.currentTime - this.startTime);
-      onPosition(positionAt(this.timeline, elapsed));
+      if (this.training) {
+        const cycle =
+          this.training.cycles.findLast((c) => c.at <= elapsed) ||
+          this.training.cycles[0];
+        onTempo(cycle.bpm);
+        onPosition(positionAt(cycle.timeline, elapsed - cycle.at));
+      } else onPosition(positionAt(this.timeline, elapsed));
       this.frame = requestAnimationFrame(draw);
     };
     draw();
@@ -204,6 +227,7 @@ export class DrumEngine {
       this.master.gain.setTargetAtTime(value, this.ctx.currentTime, 0.02);
   }
   setRepeating(repeat) {
+    if (this.training) return;
     if (!this.active) return;
     if (repeat) {
       this.endTime = Infinity;

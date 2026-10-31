@@ -9,6 +9,7 @@ A browser-based drum sequencer built with React, Web Audio and PHP. Create acous
 - Independent time signatures for every bar: 1–24 beats over quarter, eighth or sixteenth notes.
 - 1–64 equally spaced steps per row, up to 32 rows per bar and 1,000 bars per loop by default.
 - Tempo from 30 to 300 BPM, measured in quarter notes per minute.
+- Training mode: set starting/ending tempos with sliders, 1–5 complete-loop repeats per tempo and a 1–10 BPM step. Tempo changes seamlessly between loops in either direction, then holds the ending tempo until stopped.
 - Loop playback with a moving playhead and automatic navigation to the active bar.
 - Searchable loop library, collapsible sidebar, fullscreen mode and responsive layout.
 - Two configurable backends: JSON files with shared Basic Auth access, or MySQL with Google sign-in and private per-user libraries.
@@ -169,3 +170,7 @@ Commit that file with the release. The number is embedded in the JavaScript bund
 so it identifies the code actually loaded by the browser. Creating the update ZIP
 does not increment it again. The PHP entry page disables caching so a reload after
 deployment requests the current bundle.
+
+## Training mode
+
+Training is available through the staircase icon after the tempo + button. Enable or disable it in its dialog; a green button indicates it is enabled. Training settings last for the current application session and do not change the saved loop tempo or exports. Full-loop playback starts the sequence from its starting tempo each time. The regular repeat control is unavailable while training is enabled; Play bar still plays the selected bar once at the saved tempo. Manually changing the main tempo disables training. A final step shorter than the selected increment lands exactly on the target tempo, which then repeats until Stop.

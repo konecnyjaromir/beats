@@ -18,6 +18,7 @@ import {
 } from "./model";
 import { DrumEngine } from "./audio";
 import { TempoInput } from "./TempoInput";
+import { TrainingDialog } from "./TrainingDialog.jsx";
 import { DivisionPicker } from "./DivisionPicker";
 import { WarmupToggle } from "./WarmupToggle";
 import { AuthGate } from "./AuthGate";
@@ -81,6 +82,14 @@ function App({ user, onLogout, demo }) {
   );
   const [accountPage, setAccountPage] = useState(false);
   const [adminPage, setAdminPage] = useState(false);
+  const [training, setTraining] = useState({
+    enabled: false,
+    start: 80,
+    end: 120,
+    repeats: 2,
+    step: 5,
+  });
+  const [trainingTempo, setTrainingTempo] = useState(null);
   const [project, setProject] = useState(() =>
       demo ? normalizeProject(demo.first) : null,
     ),
@@ -169,6 +178,7 @@ function App({ user, onLogout, demo }) {
   }, [dirty, demo]);
   function stop() {
     engine.stop();
+    setTrainingTempo(null);
     setPlaying(false);
     setPosition({ bar: 0, progress: 0 });
   }
@@ -295,7 +305,10 @@ function App({ user, onLogout, demo }) {
         {
           warmup: adapterWarmup,
           repeat: !onlyBar && repeat,
+          training: !onlyBar && training.enabled ? training : null,
+          onTempo: setTrainingTempo,
           onEnded: () => {
+            setTrainingTempo(null);
             setPlaying(false);
             setPosition({ bar: onlyBar ? selected : 0, progress: 0 });
           },
@@ -812,7 +825,9 @@ function App({ user, onLogout, demo }) {
                   aria-label={t("Opakovat smyčku")}
                   title={t("Opakovat smyčku")}
                   aria-pressed={repeat}
-                  disabled={loading || (playing && playingBar)}
+                  disabled={
+                    loading || training.enabled || (playing && playingBar)
+                  }
                   onClick={() => {
                     setRepeat(!repeat);
                     engine.setRepeating(!repeat);
@@ -842,9 +857,29 @@ function App({ user, onLogout, demo }) {
                 <label htmlFor="bpm">TEMPO</label>
                 <div>
                   <TempoInput
-                    value={project.bpm}
-                    onCommit={(bpm) => edit({ bpm })}
-                  />
+                    value={
+                      trainingTempo ??
+                      (training.enabled && !(playing && playingBar)
+                        ? training.start
+                        : project.bpm)
+                    }
+                    onCommit={(bpm) => {
+                      setTraining((current) => ({
+                        ...current,
+                        enabled: false,
+                      }));
+                      edit({ bpm });
+                    }}
+                  >
+                    <TrainingDialog
+                      value={training}
+                      disabled={loading}
+                      onChange={(next) => {
+                        stop();
+                        setTraining(next);
+                      }}
+                    />
+                  </TempoInput>
                 </div>
               </div>
               <div className="control">

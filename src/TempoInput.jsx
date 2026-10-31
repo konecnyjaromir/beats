@@ -80,7 +80,7 @@ function TempoStep({ direction, value, onCommit }) {
   );
 }
 
-export function TempoInput({ value, onCommit }) {
+export function TempoInput({ value, onCommit, children }) {
   const [draft, setDraft] = useState(String(value));
   const dialog = useRef(null);
   const titleId = useId();
@@ -108,6 +108,7 @@ export function TempoInput({ value, onCommit }) {
           {value} <span>BPM</span>
         </button>
         <TempoStep direction={1} value={value} onCommit={onCommit} />
+        {children}
       </div>
       <dialog
         ref={dialog}

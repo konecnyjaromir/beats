@@ -1,5 +1,14 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  Trénování: "Training",
+  "Počáteční tempo": "Starting tempo",
+  "Koncové tempo": "Ending tempo",
+  "Opakování na jedno tempo": "Repeats per tempo",
+  "Krok tempa": "Tempo step",
+  "Zapnout trénování": "Enable training",
+  "Vypnout trénování": "Disable training",
+  "Tempo se mění po přehrání celé smyčky. Na koncovém tempu hraje dál, dokud přehrávání nezastavíš.":
+    "Tempo changes after complete loops. Playback continues at the ending tempo until you stop it.",
   "Kompaktní zobrazení": "Compact view",
   "Nástroj řádku {0}: {1}": "Row {0} instrument: {1}",
   "Administrační panel": "Administration",

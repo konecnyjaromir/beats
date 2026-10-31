@@ -32,6 +32,7 @@ test("Every static UI translation key has a nonempty English entry", () => {
     "FullscreenButton.jsx",
     "HomeScreen.jsx",
     "TempoInput.jsx",
+    "TrainingDialog.jsx",
     "WarmupToggle.jsx",
     "DivisionPicker.jsx",
     "AuthGate.jsx",

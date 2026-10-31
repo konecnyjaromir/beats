@@ -2,6 +2,7 @@ import React from "react";
 
 export function TransportIcon({ name }) {
   const paths = {
+    training: <path d="M3 19h5v-5h5V9h5V4h3M15 4h6v6" />,
     compact: (
       <>
         <rect x="3" y="3" width="7" height="7" rx="1" />

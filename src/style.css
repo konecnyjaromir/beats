@@ -1343,3 +1343,55 @@ footer {
     transition: none !important;
   }
 }
+.training-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  flex-shrink: 0;
+}
+.training-toggle[aria-pressed="true"] {
+  background: #303c28;
+  color: #c5ed82;
+  border-color: #91b45f;
+}
+.training-dialog {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+.control .training-dialog .training-field {
+  display: block;
+  margin: 18px 0;
+  color: #eeefed;
+  font-size: 13px;
+  letter-spacing: normal;
+}
+.training-field > span:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.training-field output {
+  color: #c5ed82;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.training-field input {
+  width: 100%;
+  margin: 14px 0 0;
+}
+.training-buttons {
+  flex-wrap: wrap;
+}
+.compact .training-dialog h3 {
+  position: static;
+  width: auto;
+  height: auto;
+  clip-path: none;
+  overflow: visible;
+}
+.compact .training-dialog p {
+  display: block;
+}

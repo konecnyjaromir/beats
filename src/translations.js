@@ -1,5 +1,7 @@
 // Czech source strings map to English. User-authored names are never translated.
 export const english = {
+  "Vyťukej tempo": "Tap to set the tempo",
+  "TAP – vyťukej tempo": "TAP – tap to set the tempo",
   "Kompaktní": "Compact",
   "Celá obrazovka": "Fullscreen",
   "Zpět do okna": "Exit fullscreen",

@@ -620,6 +620,21 @@ header {
   user-select: none;
   -webkit-touch-callout: none;
 }
+.tempo-tap {
+  min-width: 40px;
+  height: 36px;
+  padding: 0 6px;
+  touch-action: manipulation;
+  user-select: none;
+}
+.tempo-tap:active {
+  background: #c5ed82;
+  color: #202a17;
+}
+.compact .tempo-tap {
+  min-width: 44px;
+  height: 44px;
+}
 .tempo-step[aria-disabled="true"] {
   opacity: 0.4;
 }

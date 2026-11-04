@@ -82,6 +82,17 @@ function TempoStep({ direction, value, onCommit }) {
 
 export function TempoInput({ value, onCommit, children }) {
   const [draft, setDraft] = useState(String(value));
+  const taps = useRef([]);
+  function tapTempo() {
+    const now = performance.now();
+    const times = taps.current;
+    if (times.length && now - times.at(-1) > 2500) times.length = 0;
+    times.push(now);
+    if (times.length > 5) times.shift();
+    if (times.length < 2) return;
+    const bpm = clamp((60000 * (times.length - 1)) / (now - times[0]));
+    if (bpm !== value) onCommit(bpm);
+  }
   const dialog = useRef(null);
   const titleId = useId();
   const inputId = useId();
@@ -93,6 +104,19 @@ export function TempoInput({ value, onCommit, children }) {
   return (
     <>
       <div className="tempo-input">
+        <button
+          type="button"
+          className="tempo-tap"
+          title={t("Vyťukej tempo")}
+          aria-label={t("TAP – vyťukej tempo")}
+          onBlur={() => { taps.current = []; }}
+          onKeyDown={(event) => {
+            if (event.repeat && (event.key === "Enter" || event.key === " ")) event.preventDefault();
+          }}
+          onClick={tapTempo}
+        >
+          TAP
+        </button>
         <TempoStep direction={-1} value={value} onCommit={onCommit} />
         <button
           id="bpm"
